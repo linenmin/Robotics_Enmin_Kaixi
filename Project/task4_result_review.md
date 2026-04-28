@@ -57,6 +57,16 @@ This result supports the report claim that the improvement comes from feasibilit
 
 The animation is explanatory. It shows the predicted ball path, the early simple target, the later smart target, and the planned `tcp`/hoop-center path. It does not render the full UR10 mesh; the Meshcat notebook remains the source for full robot geometry visualization.
 
+For full-geometry replay, `software/scripts/replay_task4_meshcat.py` loads the UR10 visual model in Meshcat and animates each visual geometry object from the Task 4 NLP joint trajectory. It also animates the ball and marks the simple and smart targets. The script can export a standalone HTML scene:
+
+```powershell
+conda run -n robotics python scripts\replay_task4_meshcat.py --seed 0 --no-open --keep-alive-seconds 0
+```
+
+Local generated file:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task4\task4_meshcat_replay_seed0.html`
+
 ## Completion Standard Check
 
 - Minimum pass: met. `SmartInterceptionSelector` returns selected candidates and failure reasons.

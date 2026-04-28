@@ -13,3 +13,4 @@ Thumbs.db
 *.fdb_latexmk
 *.synctex.gz
 *.executed*.ipynb
+Project/outputs/task4/*.html

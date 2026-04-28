@@ -406,3 +406,10 @@ Generated evidence:
 - `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task4\task4_simple_vs_smart.png`
 - `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task4\task4_candidate_scores.png`
 - `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task4\task4_smart_catch_seed0.gif`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task4\task4_meshcat_replay_seed0.html` (local standalone Meshcat replay, intentionally ignored by git because it is large)
+
+Full UR10 Meshcat replay:
+
+```powershell
+conda run -n robotics python scripts\replay_task4_meshcat.py --seed 0
+```
