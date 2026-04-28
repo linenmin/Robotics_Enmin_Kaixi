@@ -18,6 +18,9 @@ class CandidateEvaluation:
     max_velocity_ratio: float
     safety_penalty: float
     solver_status: str
+    solve_time_s: float | None = None
+    iter_count: int | None = None
+    terminal_normal_alignment: float | None = None
     plane_crossing_exists: bool = False
     crossing_time: float | None = None
     radial_error: float | None = None
@@ -43,6 +46,9 @@ class StrategySelection:
     selected_max_abs_ddq: float | None
     selected_max_velocity_ratio: float | None
     selected_solver_status: str | None
+    selected_solve_time_s: float | None
+    selected_iter_count: int | None
+    selected_terminal_normal_alignment: float | None
     selected_crossing_time: float | None
     selected_radial_error: float | None
     selected_effective_tolerance: float | None
@@ -64,6 +70,9 @@ class StrategySelection:
             "max_abs_ddq": self.selected_max_abs_ddq,
             "max_velocity_ratio": self.selected_max_velocity_ratio,
             "solver_status": self.selected_solver_status,
+            "solve_time_s": self.selected_solve_time_s,
+            "iter_count": self.selected_iter_count,
+            "terminal_normal_alignment": self.selected_terminal_normal_alignment,
             "crossing_time_s": self.selected_crossing_time,
             "radial_error_m": self.selected_radial_error,
             "effective_tolerance_m": self.selected_effective_tolerance,
@@ -119,6 +128,9 @@ def summarize_strategy_rows(rows: list[dict]) -> dict:
             "std_success_radial_error_m": _std(successful, "radial_error_m"),
             "mean_success_max_abs_ddq": _mean(successful, "max_abs_ddq"),
             "mean_success_max_velocity_ratio": _mean(successful, "max_velocity_ratio"),
+            "mean_success_solve_time_s": _mean(successful, "solve_time_s"),
+            "mean_success_iter_count": _mean(successful, "iter_count"),
+            "mean_success_terminal_normal_alignment": _mean(successful, "terminal_normal_alignment"),
             "min_success_tcp_table_clearance_m": _min(successful, "min_tcp_table_clearance_m"),
             "min_success_frame_table_clearance_m": _min(successful, "min_frame_table_clearance_m"),
             "min_success_self_sphere_clearance_m": _min(successful, "min_self_sphere_clearance_m"),
@@ -147,6 +159,9 @@ def _selection(strategy: str, selected: CandidateEvaluation, pool_size: int, rea
         selected_max_abs_ddq=float(selected.max_abs_ddq),
         selected_max_velocity_ratio=float(selected.max_velocity_ratio),
         selected_solver_status=selected.solver_status,
+        selected_solve_time_s=selected.solve_time_s,
+        selected_iter_count=selected.iter_count,
+        selected_terminal_normal_alignment=selected.terminal_normal_alignment,
         selected_crossing_time=selected.crossing_time,
         selected_radial_error=selected.radial_error,
         selected_effective_tolerance=selected.effective_tolerance,
@@ -163,6 +178,9 @@ def _empty_selection(strategy: str, reason: str, pool_size: int) -> StrategySele
     return StrategySelection(
         strategy,
         False,
+        None,
+        None,
+        None,
         None,
         None,
         None,

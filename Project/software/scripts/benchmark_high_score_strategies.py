@@ -150,7 +150,14 @@ def _evaluate_common_candidate_pool(
     candidates = []
     for index, time, position, status in accepted:
         controller = _controller_for_time(robot, tcp_pose, time, current_time)
-        plan = controller.plan(q0=q0, dq0=dq0, target_position=position)
+        target_normal = _trajectory_direction(prediction.positions, index)
+        plan = controller.plan(
+            q0=q0,
+            dq0=dq0,
+            target_position=position,
+            target_normal=target_normal,
+            normal_alignment_weight=5.0,
+        )
         safety_metrics = evaluate_plan_safety(robot, tcp_pose, plan.q)
         safety_penalty = _safety_penalty(safety_metrics)
         terminal_error = float(plan.terminal_error)
@@ -180,6 +187,9 @@ def _evaluate_common_candidate_pool(
                 max_velocity_ratio=float(np.max(np.abs(plan.dq) / limits.velocity.reshape(1, -1))),
                 safety_penalty=safety_penalty,
                 solver_status=str(plan.status),
+                solve_time_s=float(plan.solve_time_s),
+                iter_count=int(plan.iter_count),
+                terminal_normal_alignment=float(plan.terminal_normal_alignment),
                 plane_crossing_exists=bool(crossing.plane_crossing_exists),
                 crossing_time=crossing.crossing_time,
                 radial_error=crossing.radial_error,
@@ -192,6 +202,22 @@ def _evaluate_common_candidate_pool(
             )
         )
     return candidates
+
+
+def _trajectory_direction(positions: np.ndarray, index: int) -> np.ndarray:
+    positions = np.asarray(positions, dtype=float)
+    if positions.shape[0] < 2:
+        return np.array([1.0, 0.0, 0.0])
+    if index <= 0:
+        direction = positions[1] - positions[0]
+    elif index >= positions.shape[0] - 1:
+        direction = positions[-1] - positions[-2]
+    else:
+        direction = positions[index + 1] - positions[index - 1]
+    norm = float(np.linalg.norm(direction))
+    if norm <= 1e-12:
+        return np.array([1.0, 0.0, 0.0])
+    return direction / norm
 
 
 def _safety_penalty(metrics: dict) -> float:
@@ -227,6 +253,9 @@ def _candidate_to_row(candidate: CandidateEvaluation) -> dict:
         "min_self_sphere_clearance_m": candidate.min_self_sphere_clearance,
         "ring_top_faces_ground": bool(candidate.ring_top_faces_ground),
         "solver_status": candidate.solver_status,
+        "solve_time_s": candidate.solve_time_s,
+        "iter_count": candidate.iter_count,
+        "terminal_normal_alignment": candidate.terminal_normal_alignment,
     }
 
 
@@ -246,6 +275,9 @@ def _write_summary_csv(path: Path, summary: dict):
         "std_success_radial_error_m",
         "mean_success_max_abs_ddq",
         "mean_success_max_velocity_ratio",
+        "mean_success_solve_time_s",
+        "mean_success_iter_count",
+        "mean_success_terminal_normal_alignment",
         "min_success_tcp_table_clearance_m",
         "min_success_frame_table_clearance_m",
         "min_success_self_sphere_clearance_m",

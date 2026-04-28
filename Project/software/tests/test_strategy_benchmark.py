@@ -25,6 +25,9 @@ def candidate(index, time, feasible, terminal_error, max_abs_ddq=1.0, max_veloci
         max_velocity_ratio=max_velocity_ratio,
         safety_penalty=0.0,
         solver_status="fake",
+        solve_time_s=0.12,
+        iter_count=14,
+        terminal_normal_alignment=0.8,
         plane_crossing_exists=feasible,
         crossing_time=time,
         radial_error=terminal_error,
@@ -70,6 +73,8 @@ class StrategyBenchmarkTest(unittest.TestCase):
         self.assertAlmostEqual(summary["simple_geometric"]["success_rate"], 0.5)
         self.assertAlmostEqual(summary["earliest_nlp_feasible"]["mean_success_catch_time_s"], 1.3)
         self.assertAlmostEqual(summary["earliest_nlp_feasible"]["mean_success_radial_error_m"], 0.015)
+        self.assertAlmostEqual(summary["earliest_nlp_feasible"]["mean_success_solve_time_s"], 0.12)
+        self.assertAlmostEqual(summary["earliest_nlp_feasible"]["mean_success_iter_count"], 14.0)
         self.assertGreater(summary["earliest_nlp_feasible"]["std_success_catch_time_s"], 0.0)
 
 

@@ -30,8 +30,8 @@ def render_figures(benchmark_path: Path, task2_plot: Path, mesh_side_plot: Path,
 def _render_strategy_benchmark(benchmark: dict, output_path: Path):
     rows = benchmark["strategy_rows"]
     strategies = ["simple_geometric", "earliest_nlp_feasible", "smart_cost"]
-    labels = ["simple", "earliest\nfeasible", "smart\ncost"]
-    colors = ["#9aa0a6", "#d95f02", "#1b9e77"]
+    labels = ["simple", "time-first\nfeasible", "balanced\ncost"]
+    colors = ["#9aa0a6", "#0072B2", "#009E73"]
     summary = benchmark["summary"]
 
     fig, axes = plt.subplots(2, 2, figsize=(10.5, 7.2), constrained_layout=True)

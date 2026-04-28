@@ -52,10 +52,12 @@ def run_validation(task2_metrics_path: Path, output_dir: Path, horizon_steps: in
     metrics["safety"] = evaluate_plan_safety(robot, tcp_pose, result.q)
     metrics_path = output_dir / "task3_layer1_metrics.json"
     figure_path = output_dir / "task3_layer1_plan.png"
+    joint_figure_path = output_dir / "task3_joint_limits.png"
     metrics_path.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
     plot_plan(result, target_position, figure_path)
+    plot_joint_limits(result, limits, dt, joint_figure_path)
 
-    return metrics_path, figure_path, metrics
+    return metrics_path, figure_path, joint_figure_path, metrics
 
 
 def compute_metrics(result, target_position, initial_tcp, limits):
@@ -69,6 +71,9 @@ def compute_metrics(result, target_position, initial_tcp, limits):
         "distance_reduction_m": initial_distance - terminal_distance,
         "terminal_error_m": float(result.terminal_error),
         "objective_value": float(result.objective_value),
+        "solve_time_s": float(result.solve_time_s),
+        "iter_count": int(result.iter_count),
+        "terminal_normal_alignment": None if np.isnan(result.terminal_normal_alignment) else float(result.terminal_normal_alignment),
         "q_has_nan": bool(np.isnan(result.q).any()),
         "dq_has_nan": bool(np.isnan(result.dq).any()),
         "ddq_has_nan": bool(np.isnan(result.ddq).any()),
@@ -122,6 +127,42 @@ def plot_plan(result, target_position, figure_path):
     plt.close(fig)
 
 
+def plot_joint_limits(result, limits, dt: float, figure_path: Path):
+    q_time = np.arange(result.q.shape[0]) * dt
+    ddq_time = np.arange(result.ddq.shape[0]) * dt
+    joint_labels = [f"q{i + 1}" for i in range(result.q.shape[1])]
+
+    fig, axes = plt.subplots(3, 1, figsize=(8.0, 6.6), sharex=False, constrained_layout=True)
+    fig.patch.set_facecolor("white")
+
+    for joint_index, label in enumerate(joint_labels):
+        axes[0].plot(q_time, result.q[:, joint_index], linewidth=1.4, label=label)
+        axes[1].plot(q_time, result.dq[:, joint_index], linewidth=1.4)
+        axes[2].plot(ddq_time, result.ddq[:, joint_index], linewidth=1.4)
+
+    axes[0].set_ylabel("position [rad]")
+    axes[1].set_ylabel("velocity [rad/s]")
+    axes[2].set_ylabel("acceleration [rad/s$^2$]")
+    axes[2].set_xlabel("plan time [s]")
+
+    axes[0].set_title("Joint trajectory and limits")
+    for joint_index in range(result.q.shape[1]):
+        axes[0].axhline(limits.lower[joint_index], color="0.75", linewidth=0.7, linestyle=":")
+        axes[0].axhline(limits.upper[joint_index], color="0.75", linewidth=0.7, linestyle=":")
+    axes[1].axhline(float(np.min(limits.velocity)), color="black", linewidth=0.9, linestyle="--")
+    axes[1].axhline(float(-np.min(limits.velocity)), color="black", linewidth=0.9, linestyle="--")
+    axes[2].axhline(float(np.min(limits.acceleration)), color="black", linewidth=0.9, linestyle="--")
+    axes[2].axhline(float(-np.min(limits.acceleration)), color="black", linewidth=0.9, linestyle="--")
+
+    for ax in axes:
+        ax.grid(True, alpha=0.25)
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+    axes[0].legend(ncol=6, fontsize=8, frameon=False, loc="upper center", bbox_to_anchor=(0.5, 1.02))
+    fig.savefig(figure_path, dpi=240)
+    plt.close(fig)
+
+
 def parse_args():
     parser = argparse.ArgumentParser(description="Validate Task 3 layer-1 multi-step NLP.")
     parser.add_argument("--task2-metrics", type=Path, default=Path("../outputs/task2/task2_metrics.json"))
@@ -133,7 +174,7 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
-    metrics_file, figure_file, result = run_validation(
+    metrics_file, figure_file, joint_figure_file, result = run_validation(
         task2_metrics_path=args.task2_metrics,
         output_dir=args.output_dir,
         horizon_steps=args.horizon_steps,
@@ -142,3 +183,4 @@ if __name__ == "__main__":
     print(json.dumps(result, indent=2))
     print(f"metrics: {metrics_file}")
     print(f"figure: {figure_file}")
+    print(f"joint_figure: {joint_figure_file}")

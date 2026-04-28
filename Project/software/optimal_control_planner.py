@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
+from time import perf_counter
 
 import casadi as ca
 import numpy as np
@@ -35,6 +36,9 @@ class NLPPlanResult:
     tcp_positions: np.ndarray
     terminal_error: float
     objective_value: float
+    solve_time_s: float
+    iter_count: int
+    terminal_normal_alignment: float
 
     @property
     def first_ddq(self) -> np.ndarray:
@@ -85,10 +89,24 @@ class MultiStepNLPController:
         self.tcp_table_margin = float(tcp_table_margin)
         self.limits = JointLimits.from_robot(robot)
 
-    def plan(self, q0: np.ndarray, dq0: np.ndarray, target_position: np.ndarray) -> NLPPlanResult:
+    def plan(
+        self,
+        q0: np.ndarray,
+        dq0: np.ndarray,
+        target_position: np.ndarray,
+        target_normal: np.ndarray | None = None,
+        normal_alignment_weight: float = 0.0,
+    ) -> NLPPlanResult:
         q0 = np.asarray(q0, dtype=float)
         dq0 = np.asarray(dq0, dtype=float)
         target_position = np.asarray(target_position, dtype=float).reshape(3)
+        normalized_target_normal = None
+        if target_normal is not None:
+            normalized_target_normal = np.asarray(target_normal, dtype=float).reshape(3)
+            norm = float(np.linalg.norm(normalized_target_normal))
+            if norm <= 1e-12:
+                raise ValueError("target_normal must be nonzero")
+            normalized_target_normal = normalized_target_normal / norm
 
         n = self.robot.model.nv
         horizon = self.horizon_steps
@@ -119,6 +137,10 @@ class MultiStepNLPController:
         terminal_error_expr = terminal_tcp - target_position
         objective += self.terminal_weight * ca.sumsqr(terminal_error_expr)
         objective += self.orientation_weight * (1.0 - terminal_rotation[2, 2]) ** 2
+        if normalized_target_normal is not None and normal_alignment_weight > 0.0:
+            terminal_normal = terminal_rotation[:, 0]
+            alignment = ca.dot(terminal_normal, normalized_target_normal)
+            objective += float(normal_alignment_weight) * (1.0 - alignment**2)
         for k in range(horizon + 1):
             tcp_position_k, _ = self.tcp_pose_function(q[k, :].T)
             opti.subject_to(tcp_position_k[2] >= self.table_height + self.tcp_table_margin)
@@ -140,8 +162,13 @@ class MultiStepNLPController:
             },
         )
 
+        start_time = perf_counter()
+        iter_count = 0
         try:
             solution = opti.solve()
+            solve_time_s = perf_counter() - start_time
+            stats = opti.stats()
+            iter_count = int(stats.get("iter_count", stats.get("iter_count_total", 0)) or 0)
             q_plan = np.asarray(solution.value(q), dtype=float)
             dq_plan = np.asarray(solution.value(dq), dtype=float)
             ddq_plan = np.asarray(solution.value(ddq), dtype=float)
@@ -149,6 +176,9 @@ class MultiStepNLPController:
             status = "Solve_Succeeded"
             success = True
         except RuntimeError as exc:
+            solve_time_s = perf_counter() - start_time
+            stats = opti.stats()
+            iter_count = int(stats.get("iter_count", stats.get("iter_count_total", 0)) or 0)
             q_plan = np.asarray(opti.debug.value(q), dtype=float)
             dq_plan = np.asarray(opti.debug.value(dq), dtype=float)
             ddq_plan = np.asarray(opti.debug.value(ddq), dtype=float)
@@ -158,6 +188,12 @@ class MultiStepNLPController:
 
         tcp_positions = self._evaluate_tcp_positions(q_plan)
         terminal_error = float(np.linalg.norm(tcp_positions[-1] - target_position))
+        _, terminal_rotation_value = self.tcp_pose_function(q_plan[-1])
+        terminal_normal_value = np.asarray(terminal_rotation_value, dtype=float)[:, 0]
+        if normalized_target_normal is None:
+            terminal_normal_alignment = float("nan")
+        else:
+            terminal_normal_alignment = float(abs(np.dot(terminal_normal_value, normalized_target_normal)))
         return NLPPlanResult(
             success=success,
             status=status,
@@ -167,6 +203,9 @@ class MultiStepNLPController:
             tcp_positions=tcp_positions,
             terminal_error=terminal_error,
             objective_value=objective_value,
+            solve_time_s=solve_time_s,
+            iter_count=iter_count,
+            terminal_normal_alignment=terminal_normal_alignment,
         )
 
     def _set_initial_guess(self, opti, q, dq, ddq, q0, dq0):
