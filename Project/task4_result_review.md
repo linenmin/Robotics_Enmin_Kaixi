@@ -67,6 +67,12 @@ Local generated file:
 
 - `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task4\task4_meshcat_replay_seed0.html`
 
+Report-ready static mesh figure:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task4\task4_report_mesh_scene_seed0_cropped.png`
+
+This report figure intentionally removes the red/yellow target markers. It shows the physical ball size at the catch point, the UR10 mesh, the hoop, and faint trajectory samples.
+
 ## Completion Standard Check
 
 - Minimum pass: met. `SmartInterceptionSelector` returns selected candidates and failure reasons.

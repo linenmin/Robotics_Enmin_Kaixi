@@ -47,9 +47,11 @@ def build_replay(seed: int, output_html: Path, open_browser: bool, keep_alive_se
     safety = evaluate_plan_safety(robot, tcp_pose, plan.q)
 
     viz = MeshcatVisualizer(robot.model, robot.collision_model, robot.visual_model)
-    viz.initViewer(loadModel=True, open=open_browser)
+    viz.initViewer(loadModel=False, open=open_browser)
     viz.loadViewerModel(rootNodeName="task4_ur10")
-    viz.displayFrames(True, [robot.model.getFrameId("world"), robot.model.getFrameId("tcp")])
+    viz.viewer.delete()
+    viz.loadViewerModel(rootNodeName="task4_ur10")
+    viz.displayFrames(False)
     viz.display(q0)
     _add_scene_objects(viz, observed, prediction, simple_result, smart_result)
 
@@ -139,13 +141,14 @@ def _controller_for_time(robot, tcp_pose, candidate_time, current_time):
 def _add_scene_objects(viz, observed, prediction, simple_result, smart_result):
     viewer = viz.viewer
     viewer["task4/ball"].set_object(mg.Sphere(BallSimulation.ball_radius), mg.MeshPhongMaterial(color=0x4DAF4A))
-    viewer["task4/smart_target"].set_object(mg.Sphere(0.045), mg.MeshPhongMaterial(color=0xFFD700))
+    marker_radius = 0.055
+    viewer["task4/smart_target"].set_object(mg.Sphere(marker_radius), mg.MeshPhongMaterial(color=0xFFD700, opacity=0.75))
     viewer["task4/smart_target"].set_transform(translation_matrix(smart_result.position))
     if simple_result.success:
-        viewer["task4/simple_target"].set_object(mg.Sphere(0.04), mg.MeshPhongMaterial(color=0xE41A1C))
+        viewer["task4/simple_target"].set_object(mg.Sphere(marker_radius), mg.MeshPhongMaterial(color=0xE41A1C, opacity=0.75))
         viewer["task4/simple_target"].set_transform(translation_matrix(simple_result.position))
     for i, pos in enumerate(prediction.positions[::3]):
-        viewer[f"task4/predicted_path/{i:02d}"].set_object(mg.Sphere(0.015), mg.MeshPhongMaterial(color=0x77DD77, opacity=0.35))
+        viewer[f"task4/predicted_path/{i:02d}"].set_object(mg.Sphere(0.018), mg.MeshPhongMaterial(color=0x77DD77, opacity=0.30))
         viewer[f"task4/predicted_path/{i:02d}"].set_transform(translation_matrix(pos))
     for i, pos in enumerate(observed[::8]):
         viewer[f"task4/observed_path/{i:02d}"].set_object(mg.Sphere(0.012), mg.MeshPhongMaterial(color=0x999999, opacity=0.45))
@@ -164,11 +167,6 @@ def _animate_robot(viz, robot, q_plan, animation):
             transform[:3, :3] = transform[:3, :3] @ np.diag(scale)
             with animation.at_frame(viz.viewer[visual_name], frame) as frame_viz:
                 frame_viz.set_transform(transform)
-        for frame_id in [robot.model.getFrameId("world"), robot.model.getFrameId("tcp")]:
-            frame_name = robot.model.frames[frame_id].name
-            placement = viz.data.oMf[frame_id]
-            with animation.at_frame(viz.viewer[f"task4_frames/{frame_name}"], frame) as frame_viz:
-                frame_viz.set_transform(placement.homogeneous)
 
 
 def _animate_ball(viz, predicted_positions, frame_count, animation):
