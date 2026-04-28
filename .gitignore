@@ -14,3 +14,5 @@ Thumbs.db
 *.synctex.gz
 *.executed*.ipynb
 Project/outputs/task4/*.html
+Project/outputs/high_score/*.html
+Project/outputs/high_score_smoke*/

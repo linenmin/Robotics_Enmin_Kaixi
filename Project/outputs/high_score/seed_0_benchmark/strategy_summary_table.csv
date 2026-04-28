@@ -1,0 +1,4 @@
+strategy,n,success_count,success_rate,mean_attempt_catch_time_s,std_attempt_catch_time_s,mean_success_catch_time_s,std_success_catch_time_s,mean_success_terminal_error_m,std_success_terminal_error_m,mean_success_radial_error_m,std_success_radial_error_m,mean_success_max_abs_ddq,mean_success_max_velocity_ratio,failure_count
+earliest_nlp_feasible,1,1,1.0,1.3800000000000003,0.0,1.3800000000000003,0.0,0.004198831845641646,0.0,0.003041708179876267,0.0,1.9997912698996332,0.38241460734672805,0
+simple_geometric,1,0,0.0,1.3000000000000005,0.0,,,,,,,,,1
+smart_cost,1,1,1.0,1.4200000000000004,0.0,1.4200000000000004,0.0,0.0008044490215123776,0.0,0.0018702058020738986,0.0,1.1892878735301704,0.22670928416559258,0

@@ -116,4 +116,4 @@ conda activate robotics
 
 ## Next Action
 
-Task 4 smarter interception selector 已实现并通过多 seed benchmark。下一步进入报告集成：把 Task 1-4 的方法、关键图表、表格和限制条件压缩进 8 页以内的英文报告草稿。
+Task 4 smarter interception selector 已实现并通过多 seed benchmark。用户要求在写最终报告前先完整加固实验和可视化证据链。下一步执行 `high_score_improvement_plan.md`，从 Phase 1 的公平 benchmark 开始。

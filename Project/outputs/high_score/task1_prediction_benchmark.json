@@ -1,0 +1,602 @@
+{
+  "settings": {
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49
+    ],
+    "steps": 80,
+    "dt": 0.01,
+    "prediction_horizon": 0.5,
+    "prediction_dt": 0.02
+  },
+  "summary": {
+    "measurement_rmse_m": {
+      "mean": 0.0017440539342492164,
+      "std": 7.082344154197632e-05,
+      "p95": 0.001857748718195275,
+      "max": 0.0019064855707036194
+    },
+    "filtered_rmse_m": {
+      "mean": 0.0008997494787274829,
+      "std": 7.51832802122832e-05,
+      "p95": 0.0010083312677437058,
+      "max": 0.0010578657385487149
+    },
+    "future_prediction_rmse_m": {
+      "mean": 0.0035144571793175885,
+      "std": 0.0015036884439143222,
+      "p95": 0.006353779656475876,
+      "max": 0.008194817323339975
+    },
+    "future_prediction_max_error_m": {
+      "mean": 0.005602760692536023,
+      "std": 0.0023965944535662967,
+      "p95": 0.010264765213099181,
+      "max": 0.013182557112669715
+    },
+    "final_filtered_error_m": {
+      "mean": 0.0007025630029431744,
+      "std": 0.0003328370354785812,
+      "p95": 0.0012899514033641035,
+      "max": 0.0016255569310257955
+    },
+    "min_covariance_eigenvalue": {
+      "mean": 1.4598244124150858e-07,
+      "std": 2.6738515218390314e-23,
+      "p95": 1.4598244124150855e-07,
+      "max": 1.4598244124150855e-07
+    },
+    "all_covariances_symmetric": true,
+    "all_covariances_psd": true
+  },
+  "rows": [
+    {
+      "seed": 0,
+      "measurement_rmse_m": 0.0017302719703480717,
+      "filtered_rmse_m": 0.0010306010764488125,
+      "future_prediction_rmse_m": 0.001988740599856629,
+      "future_prediction_max_error_m": 0.002945741656118894,
+      "final_filtered_error_m": 0.0007674453256159633,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 1,
+      "measurement_rmse_m": 0.0016365123236011774,
+      "filtered_rmse_m": 0.0009104793156055591,
+      "future_prediction_rmse_m": 0.0032853464780339438,
+      "future_prediction_max_error_m": 0.005334764297337253,
+      "final_filtered_error_m": 0.0005400067768201954,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 2,
+      "measurement_rmse_m": 0.0017933999255120322,
+      "filtered_rmse_m": 0.0009657736199448731,
+      "future_prediction_rmse_m": 0.00471087902283223,
+      "future_prediction_max_error_m": 0.007639326855735032,
+      "final_filtered_error_m": 0.0006118914986941516,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 3,
+      "measurement_rmse_m": 0.0016657409429876237,
+      "filtered_rmse_m": 0.0008053479918205026,
+      "future_prediction_rmse_m": 0.001034943176013955,
+      "future_prediction_max_error_m": 0.0016372597831383802,
+      "final_filtered_error_m": 0.00021246835986106074,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 4,
+      "measurement_rmse_m": 0.0016643204125594713,
+      "filtered_rmse_m": 0.0007391568099264422,
+      "future_prediction_rmse_m": 0.003891736982731946,
+      "future_prediction_max_error_m": 0.006206064368110251,
+      "final_filtered_error_m": 0.0007221724238562642,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 5,
+      "measurement_rmse_m": 0.0017302895959253439,
+      "filtered_rmse_m": 0.0009142900588805662,
+      "future_prediction_rmse_m": 0.0021432254380146726,
+      "future_prediction_max_error_m": 0.0033465233386380934,
+      "final_filtered_error_m": 0.0005653098627669052,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 6,
+      "measurement_rmse_m": 0.0016952424562964074,
+      "filtered_rmse_m": 0.0010024613852868231,
+      "future_prediction_rmse_m": 0.0030178536332495366,
+      "future_prediction_max_error_m": 0.004643465196833682,
+      "final_filtered_error_m": 0.0009372747588596615,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 7,
+      "measurement_rmse_m": 0.001815177954666234,
+      "filtered_rmse_m": 0.0009813844451445114,
+      "future_prediction_rmse_m": 0.008194817323339975,
+      "future_prediction_max_error_m": 0.013182557112669715,
+      "final_filtered_error_m": 0.0012617495440509865,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 8,
+      "measurement_rmse_m": 0.0018452121922176879,
+      "filtered_rmse_m": 0.0009428710081813345,
+      "future_prediction_rmse_m": 0.005212751055471461,
+      "future_prediction_max_error_m": 0.008167013256926713,
+      "final_filtered_error_m": 0.0012217347624058736,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 9,
+      "measurement_rmse_m": 0.0017835418756376113,
+      "filtered_rmse_m": 0.0009172426635349237,
+      "future_prediction_rmse_m": 0.006291904890168168,
+      "future_prediction_max_error_m": 0.01008860420742004,
+      "final_filtered_error_m": 0.0010436928854712939,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 10,
+      "measurement_rmse_m": 0.0017134226157636979,
+      "filtered_rmse_m": 0.0008956003956511311,
+      "future_prediction_rmse_m": 0.002446910781567445,
+      "future_prediction_max_error_m": 0.003908625274381664,
+      "final_filtered_error_m": 0.0005149756896013998,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 11,
+      "measurement_rmse_m": 0.0017963879593455173,
+      "filtered_rmse_m": 0.0009675809235371884,
+      "future_prediction_rmse_m": 0.0045490205658957426,
+      "future_prediction_max_error_m": 0.007042903136547271,
+      "final_filtered_error_m": 0.0011886655595862974,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 12,
+      "measurement_rmse_m": 0.001838059685372926,
+      "filtered_rmse_m": 0.0009092742225464413,
+      "future_prediction_rmse_m": 0.0011235088562754007,
+      "future_prediction_max_error_m": 0.0018763597068285115,
+      "final_filtered_error_m": 0.0002143668362904878,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 13,
+      "measurement_rmse_m": 0.0015675743615553711,
+      "filtered_rmse_m": 0.0008517235830833424,
+      "future_prediction_rmse_m": 0.005071213661555342,
+      "future_prediction_max_error_m": 0.007895621376937337,
+      "final_filtered_error_m": 0.0013154516385121585,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 14,
+      "measurement_rmse_m": 0.0018551107170382568,
+      "filtered_rmse_m": 0.0008480630329089794,
+      "future_prediction_rmse_m": 0.004889965748267486,
+      "future_prediction_max_error_m": 0.007767010472803042,
+      "final_filtered_error_m": 0.0010407610589164718,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 15,
+      "measurement_rmse_m": 0.0016911490664968593,
+      "filtered_rmse_m": 0.0008428480154468331,
+      "future_prediction_rmse_m": 0.003245529576611447,
+      "future_prediction_max_error_m": 0.0050945204791405735,
+      "final_filtered_error_m": 0.0007261753849002083,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 16,
+      "measurement_rmse_m": 0.0017216437549332298,
+      "filtered_rmse_m": 0.0009627728039724787,
+      "future_prediction_rmse_m": 0.0027791139765531957,
+      "future_prediction_max_error_m": 0.004482883682705109,
+      "final_filtered_error_m": 0.0006946721021621162,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 17,
+      "measurement_rmse_m": 0.0016550442203748829,
+      "filtered_rmse_m": 0.0007254512278623251,
+      "future_prediction_rmse_m": 0.0027893340124631088,
+      "future_prediction_max_error_m": 0.0046016787215456935,
+      "final_filtered_error_m": 0.00033276044889481296,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 18,
+      "measurement_rmse_m": 0.001783121240786669,
+      "filtered_rmse_m": 0.0007752914188866887,
+      "future_prediction_rmse_m": 0.0015118189949543776,
+      "future_prediction_max_error_m": 0.0024312107448433897,
+      "final_filtered_error_m": 0.0004389094383056006,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 19,
+      "measurement_rmse_m": 0.0017366581291767544,
+      "filtered_rmse_m": 0.0009852802959861534,
+      "future_prediction_rmse_m": 0.003570766742908984,
+      "future_prediction_max_error_m": 0.0058399210533366325,
+      "final_filtered_error_m": 0.00047639646055227977,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 20,
+      "measurement_rmse_m": 0.0018746526956851016,
+      "filtered_rmse_m": 0.0009358958717169685,
+      "future_prediction_rmse_m": 0.002355690073696923,
+      "future_prediction_max_error_m": 0.003923127407621146,
+      "final_filtered_error_m": 0.0002150600533904459,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 21,
+      "measurement_rmse_m": 0.0016940983572849924,
+      "filtered_rmse_m": 0.0007494639426408012,
+      "future_prediction_rmse_m": 0.00456688085971541,
+      "future_prediction_max_error_m": 0.007350788709651298,
+      "final_filtered_error_m": 0.0006914480330231921,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 22,
+      "measurement_rmse_m": 0.0016307075408540596,
+      "filtered_rmse_m": 0.0008949868545927981,
+      "future_prediction_rmse_m": 0.0036040412019157897,
+      "future_prediction_max_error_m": 0.005747427770946279,
+      "final_filtered_error_m": 0.0007426229345944827,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 23,
+      "measurement_rmse_m": 0.0017581844849838299,
+      "filtered_rmse_m": 0.0008893175206233096,
+      "future_prediction_rmse_m": 0.004507075546448577,
+      "future_prediction_max_error_m": 0.007300251089264012,
+      "final_filtered_error_m": 0.0006276400391390963,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 24,
+      "measurement_rmse_m": 0.0017926693262276905,
+      "filtered_rmse_m": 0.0009713856576441476,
+      "future_prediction_rmse_m": 0.002719935963829035,
+      "future_prediction_max_error_m": 0.004447911642237907,
+      "final_filtered_error_m": 0.0005783288422630545,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 25,
+      "measurement_rmse_m": 0.001758031934196245,
+      "filtered_rmse_m": 0.0009280197877405025,
+      "future_prediction_rmse_m": 0.0025173390616116203,
+      "future_prediction_max_error_m": 0.004039844934174716,
+      "final_filtered_error_m": 0.0004264550518312012,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 26,
+      "measurement_rmse_m": 0.0016971056087847606,
+      "filtered_rmse_m": 0.000860113855277086,
+      "future_prediction_rmse_m": 0.002065464309639265,
+      "future_prediction_max_error_m": 0.0033308718506715445,
+      "final_filtered_error_m": 0.0003352522077065836,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 27,
+      "measurement_rmse_m": 0.001686011450647609,
+      "filtered_rmse_m": 0.000836676888078823,
+      "future_prediction_rmse_m": 0.0035393466514314718,
+      "future_prediction_max_error_m": 0.005548467921732605,
+      "final_filtered_error_m": 0.0008965537654573878,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 28,
+      "measurement_rmse_m": 0.0016902286736328739,
+      "filtered_rmse_m": 0.0008535545933797088,
+      "future_prediction_rmse_m": 0.0027841134229734904,
+      "future_prediction_max_error_m": 0.004305864869568404,
+      "final_filtered_error_m": 0.0007986825042475062,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 29,
+      "measurement_rmse_m": 0.0017379215385588242,
+      "filtered_rmse_m": 0.0008518305731311658,
+      "future_prediction_rmse_m": 0.0033547133247467517,
+      "future_prediction_max_error_m": 0.005431960585896171,
+      "final_filtered_error_m": 0.0005011616241503492,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 30,
+      "measurement_rmse_m": 0.0016906370228583374,
+      "filtered_rmse_m": 0.0008664089842519612,
+      "future_prediction_rmse_m": 0.002648325215798885,
+      "future_prediction_max_error_m": 0.004057037276237091,
+      "final_filtered_error_m": 0.0008237301417851264,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 31,
+      "measurement_rmse_m": 0.0017620203625565002,
+      "filtered_rmse_m": 0.0008507252013242975,
+      "future_prediction_rmse_m": 0.0023900120878858977,
+      "future_prediction_max_error_m": 0.004020019997734006,
+      "final_filtered_error_m": 0.0003551264887748222,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 32,
+      "measurement_rmse_m": 0.001819986913986547,
+      "filtered_rmse_m": 0.0009557910910365581,
+      "future_prediction_rmse_m": 0.006404404465273091,
+      "future_prediction_max_error_m": 0.01040889694501848,
+      "final_filtered_error_m": 0.000827192636972959,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 33,
+      "measurement_rmse_m": 0.00173739659287502,
+      "filtered_rmse_m": 0.0008507197221928426,
+      "future_prediction_rmse_m": 0.0035337583097439875,
+      "future_prediction_max_error_m": 0.005489937917233119,
+      "final_filtered_error_m": 0.0009352567386101237,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 34,
+      "measurement_rmse_m": 0.0016475633962433327,
+      "filtered_rmse_m": 0.0008892480587189788,
+      "future_prediction_rmse_m": 0.004819997086727209,
+      "future_prediction_max_error_m": 0.007580463611371715,
+      "final_filtered_error_m": 0.001070627629146726,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 35,
+      "measurement_rmse_m": 0.0017158455043503728,
+      "filtered_rmse_m": 0.0008145036033683966,
+      "future_prediction_rmse_m": 0.003564759542075808,
+      "future_prediction_max_error_m": 0.005777040540389318,
+      "final_filtered_error_m": 0.000516806305270424,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 36,
+      "measurement_rmse_m": 0.0017867400962885513,
+      "filtered_rmse_m": 0.0008997907196744701,
+      "future_prediction_rmse_m": 0.0025018338944567636,
+      "future_prediction_max_error_m": 0.004052446781562445,
+      "final_filtered_error_m": 0.00043937832573602987,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 37,
+      "measurement_rmse_m": 0.0017922650301318568,
+      "filtered_rmse_m": 0.0009825080600812544,
+      "future_prediction_rmse_m": 0.00389643478124118,
+      "future_prediction_max_error_m": 0.006359279986142397,
+      "final_filtered_error_m": 0.0005708772425997703,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 38,
+      "measurement_rmse_m": 0.0018353150777112508,
+      "filtered_rmse_m": 0.001007923484673199,
+      "future_prediction_rmse_m": 0.0021490539388816523,
+      "future_prediction_max_error_m": 0.0034697811648265547,
+      "final_filtered_error_m": 0.0003717837238352932,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 39,
+      "measurement_rmse_m": 0.0017571907836822307,
+      "filtered_rmse_m": 0.0009073583817430581,
+      "future_prediction_rmse_m": 0.00318846176435103,
+      "future_prediction_max_error_m": 0.005017878078676774,
+      "final_filtered_error_m": 0.0007300217954773675,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 40,
+      "measurement_rmse_m": 0.0018599070827782897,
+      "filtered_rmse_m": 0.0010578657385487149,
+      "future_prediction_rmse_m": 0.006847934919579045,
+      "future_prediction_max_error_m": 0.01069596354116112,
+      "final_filtered_error_m": 0.0016255569310257955,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 41,
+      "measurement_rmse_m": 0.0017535666116263783,
+      "filtered_rmse_m": 0.0008820564207716617,
+      "future_prediction_rmse_m": 0.0019283459183801696,
+      "future_prediction_max_error_m": 0.0032533859710501393,
+      "final_filtered_error_m": 0.0001391122656109052,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 42,
+      "measurement_rmse_m": 0.0016940266997416003,
+      "filtered_rmse_m": 0.0009065838680406754,
+      "future_prediction_rmse_m": 0.004974904558047328,
+      "future_prediction_max_error_m": 0.007976368374457322,
+      "final_filtered_error_m": 0.0008410349627062859,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 43,
+      "measurement_rmse_m": 0.0017133057269206773,
+      "filtered_rmse_m": 0.0007874327411345797,
+      "future_prediction_rmse_m": 0.001808182973684297,
+      "future_prediction_max_error_m": 0.002870817872224007,
+      "final_filtered_error_m": 0.0003671540584396744,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 44,
+      "measurement_rmse_m": 0.0019064855707036194,
+      "filtered_rmse_m": 0.0009476174470639743,
+      "future_prediction_rmse_m": 0.004318989477692803,
+      "future_prediction_max_error_m": 0.006711429727340259,
+      "final_filtered_error_m": 0.0011209276590617827,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 45,
+      "measurement_rmse_m": 0.0016827870867299514,
+      "filtered_rmse_m": 0.0009062927896733622,
+      "future_prediction_rmse_m": 0.004375424174736789,
+      "future_prediction_max_error_m": 0.00692470280315993,
+      "final_filtered_error_m": 0.0008698048092559599,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 46,
+      "measurement_rmse_m": 0.0016750004862313836,
+      "filtered_rmse_m": 0.0008635788560685849,
+      "future_prediction_rmse_m": 0.0014811039387220097,
+      "future_prediction_max_error_m": 0.0022530905119273895,
+      "final_filtered_error_m": 0.0005856763395233379,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 47,
+      "measurement_rmse_m": 0.0017779503926853137,
+      "filtered_rmse_m": 0.0009082001551898274,
+      "future_prediction_rmse_m": 0.003070011183537169,
+      "future_prediction_max_error_m": 0.005007278461063207,
+      "final_filtered_error_m": 0.00042574382130387226,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 48,
+      "measurement_rmse_m": 0.0017726023936826844,
+      "filtered_rmse_m": 0.001008664908437757,
+      "future_prediction_rmse_m": 0.003396006366064901,
+      "future_prediction_max_error_m": 0.005081069717413054,
+      "final_filtered_error_m": 0.0013130256518930176,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    },
+    {
+      "seed": 49,
+      "measurement_rmse_m": 0.0017846108692251093,
+      "filtered_rmse_m": 0.0009494638648987689,
+      "future_prediction_rmse_m": 0.004660932436226017,
+      "future_prediction_max_error_m": 0.007572573844051494,
+      "final_filtered_error_m": 0.0005592267482019631,
+      "covariance_is_symmetric": true,
+      "min_covariance_eigenvalue": 1.4598244124150855e-07
+    }
+  ]
+}
