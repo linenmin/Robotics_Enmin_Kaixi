@@ -116,4 +116,4 @@ conda activate robotics
 
 ## Next Action
 
-Task 4 smarter interception selector 已实现并通过多 seed benchmark。用户要求在写最终报告前先完整加固实验和可视化证据链。下一步执行 `high_score_improvement_plan.md`，从 Phase 1 的公平 benchmark 开始。
+High-score improvement plan Phase 1-7 已完成。最终报告已写入 `report_template/template.tex`，并用 Tectonic 渲染为 `report_template/final_report.pdf`。下一步是可选的最终人工审阅、提交打包，或根据老师格式要求做最后微调。

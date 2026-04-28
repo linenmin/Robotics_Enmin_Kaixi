@@ -243,7 +243,7 @@
 
 ## Phase 7: 报告集成和页数验收
 
-**Status:** pending
+**Status:** completed
 
 ### 目标
 
@@ -271,6 +271,20 @@
 - final PDF
 - rendered page PNGs
 
+### 结果
+
+- Final report text integrated into `report_template/template.tex`.
+- Tectonic compiled the report successfully:
+  - `report_template/final_report.pdf`
+  - `report_template/build/template.pdf`
+- PDF pages exported and inspected:
+  - `report_template/rendered_pages/page-1.png` through `page-5.png`
+- Page count:
+  - page 1: title page;
+  - pages 2-4: report body, 3 pages total;
+  - page 5: references.
+- Visual inspection passed: figures fit inside the margins, captions are readable, the table does not overflow, and the report stays below the 8-page body limit.
+
 ## Execution Order
 
 1. Phase 1：先统一 benchmark，解决“baseline 不公平”和“shorter time 证据不足”。
@@ -283,4 +297,4 @@
 
 ## Current Next Step
 
-Phase 1-6 complete. Next step is Phase 7: write the final report draft, render with Tectonic, export PDF pages, and inspect page count and figure readability.
+Phase 1-7 complete. Next step is optional final polishing, submission packaging, or a last professor-style review before handing in.
