@@ -24,7 +24,7 @@ from trajectory_predictor import LinearKalmanTrajectoryPredictor
 from utils.ball_simulation import BallSimulation
 
 
-def render_scene(seed: int, output_html: Path):
+def render_scene(seed: int, output_html: Path, camera_view: str):
     prediction, observed, current_time = _make_prediction(seed)
     robot = load_project_robot(SOFTWARE_DIR)
     tcp_pose = build_tcp_pose_function(robot)
@@ -47,7 +47,7 @@ def render_scene(seed: int, output_html: Path):
     viz.displayFrames(False)
     viz.display(plan.q[-1])
     _add_clean_scene(viz, prediction, observed, smart_result)
-    _set_report_camera(viz)
+    _set_report_camera(viz, camera_view)
 
     output_html.parent.mkdir(parents=True, exist_ok=True)
     output_html.write_text(viz.viewer.static_html(), encoding="utf-8")
@@ -132,10 +132,15 @@ def _add_clean_scene(viz, prediction, observed, smart_result):
         viewer[f"task4_report/observed_path/{i:02d}"].set_transform(translation_matrix(pos))
 
 
-def _set_report_camera(viz):
+def _set_report_camera(viz, camera_view: str):
     viewer = viz.viewer
-    viewer["/Cameras/default/rotated"].set_object(mg.PerspectiveCamera(fov=48))
-    viewer["/Cameras/default"].set_transform(translation_matrix([1.8, -2.4, 1.35]))
+    viewer["/Cameras/default/rotated"].set_object(mg.PerspectiveCamera(fov=46))
+    if camera_view == "side":
+        viewer["/Cameras/default"].set_transform(translation_matrix([1.05, -4.0, 1.05]))
+    elif camera_view == "front":
+        viewer["/Cameras/default"].set_transform(translation_matrix([-2.4, 0.15, 1.25]))
+    else:
+        viewer["/Cameras/default"].set_transform(translation_matrix([1.8, -2.4, 1.35]))
     viewer["/Cameras/default/rotated/<object>"].set_property("position", [0, 0, 0])
 
 
@@ -143,11 +148,12 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Render a clean Meshcat UR10 scene for the report.")
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--output-html", type=Path, default=Path("../outputs/task4/task4_report_mesh_scene_seed0.html"))
+    parser.add_argument("--camera-view", choices=["three-quarter", "side", "front"], default="three-quarter")
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_args()
-    result = render_scene(args.seed, args.output_html)
+    result = render_scene(args.seed, args.output_html, args.camera_view)
     for key, value in result.items():
         print(f"{key}: {value}")

@@ -70,6 +70,7 @@ Local generated file:
 Report-ready static mesh figure:
 
 - `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task4\task4_report_mesh_scene_seed0_cropped.png`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task4\task4_report_mesh_scene_seed0_side_cropped.png`
 
 This report figure intentionally removes the red/yellow target markers. It shows the physical ball size at the catch point, the UR10 mesh, the hoop, and faint trajectory samples.
 
