@@ -457,3 +457,29 @@ Result:
 - Exported 5 pages total: title page, 3 body pages, and references.
 - Body page count is below the 8-page limit.
 - Visual page inspection passed for figure placement, caption readability, table width, and obvious overflow.
+
+### Phase 7 Professor-Style Report Revision
+
+After strict review, the first report draft was technically correct but too compressed. It answered the tasks, but the task logic was not easy enough for a grader to scan. The revised report now uses explicit task sections and a question-answer evidence map.
+
+Updated:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\report_template\template.tex`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\report_template\final_report.pdf`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\report_template\rendered_pages\page-1.png` through `page-7.png`
+
+Revision changes:
+
+- added a report map table that links each PDF task to the submitted answer and evidence;
+- rewrote each task as `Question answered`, `Method`, `Evidence`, and where needed `Limitation`;
+- added the Task 3 NLP trajectory figure so the optimization controller has direct visual evidence;
+- expanded Task 4 to separate the fair benchmark, the time-vs-effort tradeoff, and the smart-vs-earliest-feasible interpretation;
+- kept the report within the body limit: title page, 5 body pages, and references.
+
+Verification:
+
+- Tectonic compilation succeeded.
+- Exported 7 pages total.
+- Body pages are pages 2-6, 5 pages total.
+- Visual inspection passed after fixing the report-map table spacing.
+- Banned wording and sentence-pattern scan returned no matches.
