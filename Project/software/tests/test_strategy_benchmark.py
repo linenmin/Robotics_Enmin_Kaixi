@@ -6,6 +6,7 @@ from strategy_benchmark import (
     CandidateEvaluation,
     summarize_strategy_rows,
     select_earliest_nlp_feasible,
+    select_latest_nlp_feasible,
     select_simple_geometric,
     select_smart_cost,
 )
@@ -46,16 +47,20 @@ class StrategyBenchmarkTest(unittest.TestCase):
 
         simple = select_simple_geometric(candidates)
         earliest = select_earliest_nlp_feasible(candidates)
+        latest = select_latest_nlp_feasible(candidates)
         smart = select_smart_cost(candidates)
 
         self.assertEqual(simple.selected_index, 0)
         self.assertFalse(simple.success)
         self.assertEqual(earliest.selected_index, 1)
         self.assertTrue(earliest.success)
+        self.assertEqual(latest.selected_index, 2)
+        self.assertTrue(latest.success)
         self.assertEqual(smart.selected_index, 2)
         self.assertTrue(smart.success)
         self.assertEqual(simple.candidate_pool_size, 3)
         self.assertEqual(earliest.candidate_pool_size, 3)
+        self.assertEqual(latest.candidate_pool_size, 3)
         self.assertEqual(smart.candidate_pool_size, 3)
 
     def test_summary_reports_success_rate_and_time_statistics(self):

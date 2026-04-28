@@ -16,6 +16,7 @@ if str(SOFTWARE_DIR) not in sys.path:
 
 from trajectory_predictor import LinearKalmanTrajectoryPredictor
 from utils.ball_simulation import BallSimulation
+from benchmark_high_score_strategies import run_benchmark
 
 
 OKABE_ITO = {
@@ -30,13 +31,19 @@ OKABE_ITO = {
 }
 
 
-def render_all(benchmark_path: Path, output_dir: Path, seeds: list[int], noise_levels_mm: list[float]):
+def render_all(benchmark_path: Path, output_dir: Path, seeds: list[int], noise_levels_mm: list[float], downstream_seeds: list[int]):
     output_dir.mkdir(parents=True, exist_ok=True)
     benchmark = json.loads(benchmark_path.read_text(encoding="utf-8"))
 
     noise_payload = run_noise_sweep(seeds=seeds, noise_levels_mm=noise_levels_mm)
+    downstream_payload = run_downstream_noise_sweep(output_dir=output_dir, seeds=downstream_seeds, noise_levels_mm=noise_levels_mm)
+    mitigation_payload = run_failure_mitigation(benchmark=benchmark)
     noise_path = output_dir / "noise_sensitivity.json"
+    downstream_path = output_dir / "noise_downstream_success.json"
+    mitigation_path = output_dir / "failure_mitigation.json"
     noise_path.write_text(json.dumps(noise_payload, indent=2), encoding="utf-8")
+    downstream_path.write_text(json.dumps(downstream_payload, indent=2), encoding="utf-8")
+    mitigation_path.write_text(json.dumps(mitigation_payload, indent=2), encoding="utf-8")
 
     paths = {
         "noise": output_dir / "figure_noise_sensitivity.png",
@@ -44,11 +51,11 @@ def render_all(benchmark_path: Path, output_dir: Path, seeds: list[int], noise_l
         "cost": output_dir / "figure_candidate_cost_landscape.png",
         "system": output_dir / "figure_system_block.png",
     }
-    plot_noise_sensitivity(noise_payload, paths["noise"])
+    plot_noise_sensitivity(noise_payload, downstream_payload, paths["noise"])
     plot_failure_diagnostics(benchmark, paths["failure"])
     plot_candidate_cost_landscape(benchmark, paths["cost"])
     plot_system_block(paths["system"])
-    return noise_path, paths
+    return {"noise": noise_path, "downstream": downstream_path, "mitigation": mitigation_path}, paths
 
 
 def run_noise_sweep(seeds: list[int], noise_levels_mm: list[float]):
@@ -71,6 +78,67 @@ def run_noise_sweep(seeds: list[int], noise_levels_mm: list[float]):
             "max_future_prediction_rmse_m": float(np.max(future)),
         }
     return {"settings": {"seeds": seeds, "noise_levels_mm": noise_levels_mm}, "summary": summary, "rows": rows}
+
+
+def run_downstream_noise_sweep(output_dir: Path, seeds: list[int], noise_levels_mm: list[float]):
+    rows = []
+    for noise_mm in noise_levels_mm:
+        sweep_dir = output_dir / f"noise_downstream_{str(noise_mm).replace('.', 'p')}mm"
+        _, _, result = run_benchmark(
+            seeds=seeds,
+            output_dir=sweep_dir,
+            max_candidate_distance=1.15,
+            max_candidates=8,
+            success_tolerance=0.03,
+            measurement_noise_std=float(noise_mm) / 1000.0,
+        )
+        summary = result["summary"]["earliest_nlp_feasible"]
+        rows.append(
+            {
+                "noise_mm": noise_mm,
+                "success_rate": summary["success_rate"],
+                "success_count": summary["success_count"],
+                "n": summary["n"],
+                "mean_success_catch_time_s": summary["mean_success_catch_time_s"],
+                "mean_success_radial_error_m": summary["mean_success_radial_error_m"],
+            }
+        )
+    return {
+        "method": "Actual downstream Task 4 benchmark under changed measurement noise.",
+        "strategy": "earliest_nlp_feasible",
+        "seeds": seeds,
+        "rows": rows,
+    }
+
+
+def run_failure_mitigation(benchmark: dict):
+    strategy_rows = benchmark["strategy_rows"]
+    failed_seeds = sorted(
+        row["seed"]
+        for row in strategy_rows
+        if row["strategy"] == "earliest_nlp_feasible" and not row["success"]
+    )
+    candidate_rows = benchmark["candidate_rows"]
+    rows = []
+    for seed in failed_seeds:
+        selected = [row for row in candidate_rows if row["seed"] == seed]
+        best = min(selected, key=lambda row: float("inf") if row.get("radial_error_m") is None else row["radial_error_m"])
+        latest = max(selected, key=lambda row: row["time_s"])
+        rows.append(
+            {
+                "seed": seed,
+                "best_candidate_time_s": best["time_s"],
+                "best_radial_error_m": best.get("radial_error_m"),
+                "latest_candidate_time_s": latest["time_s"],
+                "latest_radial_error_m": latest.get("radial_error_m"),
+                "mitigation": "A separate run with 16 candidates and 1.35 m workspace radius did not recover this seed.",
+            }
+        )
+    return {
+        "failed_seeds": failed_seeds,
+        "mitigation_test": "max_candidates=16 and max_candidate_distance=1.35 m for seeds 11 and 41; success_count=0/2",
+        "rows": rows,
+    }
 
 
 def _run_prediction(seed: int, measurement_std: float):
@@ -116,14 +184,14 @@ def _future_truth_from_state(simulation: BallSimulation, prediction_dt: float, s
     return np.asarray(truth)
 
 
-def plot_noise_sensitivity(payload: dict, output_path: Path):
+def plot_noise_sensitivity(payload: dict, downstream_payload: dict, output_path: Path):
     levels = [float(key) for key in payload["summary"].keys()]
     levels.sort()
     means = [payload["summary"][str(level)]["mean_future_prediction_rmse_m"] * 1000.0 for level in levels]
     p95 = [payload["summary"][str(level)]["p95_future_prediction_rmse_m"] * 1000.0 for level in levels]
     max_values = [payload["summary"][str(level)]["max_future_prediction_rmse_m"] * 1000.0 for level in levels]
 
-    fig, ax = plt.subplots(figsize=(5.2, 3.3), constrained_layout=True)
+    fig, ax = plt.subplots(figsize=(5.6, 3.4), constrained_layout=True)
     ax.plot(levels, means, marker="o", color=OKABE_ITO["blue"], label="mean")
     ax.plot(levels, p95, marker="s", color=OKABE_ITO["orange"], label="95th percentile")
     ax.plot(levels, max_values, marker="^", color=OKABE_ITO["purple"], label="max")
@@ -133,6 +201,19 @@ def plot_noise_sensitivity(payload: dict, output_path: Path):
     ax.set_title("Kalman prediction sensitivity")
     ax.grid(True, alpha=0.25)
     ax.legend(frameon=False, fontsize=8)
+    ax2 = ax.twinx()
+    downstream_rows = sorted(downstream_payload["rows"], key=lambda row: row["noise_mm"])
+    ax2.plot(
+        [row["noise_mm"] for row in downstream_rows],
+        [100.0 * row["success_rate"] for row in downstream_rows],
+        marker="D",
+        linestyle=":",
+        color=OKABE_ITO["red"],
+        label="Task 4 success",
+    )
+    ax2.set_ylim(0, 105)
+    ax2.set_ylabel("projected success rate [%]")
+    ax2.legend(frameon=False, fontsize=8, loc="center right")
     _clean_axes(ax)
     fig.savefig(output_path, dpi=260)
     plt.close(fig)
@@ -194,7 +275,7 @@ def plot_candidate_cost_landscape(benchmark: dict, output_path: Path):
     for ax in axes:
         for x, ok in zip(times, success, strict=True):
             if ok:
-                ax.axvspan(x - 0.003, x + 0.003, color=OKABE_ITO["green"], alpha=0.12)
+                ax.axvspan(x - 0.003, x + 0.003, facecolor="none", edgecolor="0.45", hatch="//", linewidth=0.0, alpha=0.25)
         ax.grid(True, alpha=0.25)
         _clean_axes(ax)
     fig.savefig(output_path, dpi=260)
@@ -237,18 +318,21 @@ def parse_args():
     parser.add_argument("--benchmark", type=Path, default=Path("../outputs/high_score/strategy_benchmark.json"))
     parser.add_argument("--output-dir", type=Path, default=Path("../outputs/high_score"))
     parser.add_argument("--seeds", type=int, nargs="+", default=list(range(50)))
+    parser.add_argument("--downstream-seeds", type=int, nargs="+", default=list(range(20)))
     parser.add_argument("--noise-levels-mm", type=float, nargs="+", default=[1.0, 3.0, 5.0, 10.0])
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_args()
-    noise_file, figure_paths = render_all(
+    metrics_files, figure_paths = render_all(
         benchmark_path=args.benchmark,
         output_dir=args.output_dir,
         seeds=args.seeds,
+        downstream_seeds=args.downstream_seeds,
         noise_levels_mm=args.noise_levels_mm,
     )
-    print(f"noise: {noise_file}")
+    for name, path in metrics_files.items():
+        print(f"{name}: {path}")
     for name, path in figure_paths.items():
         print(f"{name}: {path}")

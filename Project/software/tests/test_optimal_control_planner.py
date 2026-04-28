@@ -42,6 +42,7 @@ class MultiStepNLPControllerTest(unittest.TestCase):
         self.assertLess(result.terminal_error, 0.08)
         self.assertGreaterEqual(result.solve_time_s, 0.0)
         self.assertIsInstance(result.iter_count, int)
+        self.assertGreaterEqual(result.min_tcp_top_z, -1e-7)
 
     def test_accepts_terminal_normal_alignment_objective(self):
         q0 = np.array([0.0, -1.9, 1.9, -1.6, -1.6, 0.0])
@@ -83,6 +84,7 @@ class MultiStepNLPControllerTest(unittest.TestCase):
 
         self.assertTrue(result.success, result.status)
         self.assertLessEqual(np.max(np.abs(result.ddq)), limits.acceleration[0] + 1e-7)
+        self.assertGreaterEqual(result.min_tcp_top_z, -1e-7)
         self.assertTrue(np.all(result.dq <= limits.velocity + 1e-7))
         self.assertTrue(np.all(result.dq >= -limits.velocity - 1e-7))
         self.assertTrue(np.all(result.q <= limits.upper + 1e-7))

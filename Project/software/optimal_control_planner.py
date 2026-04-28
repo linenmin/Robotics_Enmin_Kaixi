@@ -39,6 +39,7 @@ class NLPPlanResult:
     solve_time_s: float
     iter_count: int
     terminal_normal_alignment: float
+    min_tcp_top_z: float
 
     @property
     def first_ddq(self) -> np.ndarray:
@@ -142,8 +143,9 @@ class MultiStepNLPController:
             alignment = ca.dot(terminal_normal, normalized_target_normal)
             objective += float(normal_alignment_weight) * (1.0 - alignment**2)
         for k in range(horizon + 1):
-            tcp_position_k, _ = self.tcp_pose_function(q[k, :].T)
+            tcp_position_k, tcp_rotation_k = self.tcp_pose_function(q[k, :].T)
             opti.subject_to(tcp_position_k[2] >= self.table_height + self.tcp_table_margin)
+            opti.subject_to(tcp_rotation_k[2, 2] >= 0.0)
         opti.minimize(objective)
 
         self._set_initial_guess(opti, q, dq, ddq, q0, dq0)
@@ -194,6 +196,7 @@ class MultiStepNLPController:
             terminal_normal_alignment = float("nan")
         else:
             terminal_normal_alignment = float(abs(np.dot(terminal_normal_value, normalized_target_normal)))
+        min_tcp_top_z = self._min_tcp_top_z(q_plan)
         return NLPPlanResult(
             success=success,
             status=status,
@@ -206,6 +209,7 @@ class MultiStepNLPController:
             solve_time_s=solve_time_s,
             iter_count=iter_count,
             terminal_normal_alignment=terminal_normal_alignment,
+            min_tcp_top_z=min_tcp_top_z,
         )
 
     def _set_initial_guess(self, opti, q, dq, ddq, q0, dq0):
@@ -220,6 +224,13 @@ class MultiStepNLPController:
             position, _ = self.tcp_pose_function(qk)
             positions.append(np.asarray(position, dtype=float).reshape(3))
         return np.vstack(positions)
+
+    def _min_tcp_top_z(self, q_plan: np.ndarray) -> float:
+        values = []
+        for qk in q_plan:
+            _, rotation = self.tcp_pose_function(qk)
+            values.append(float(np.asarray(rotation, dtype=float)[2, 2]))
+        return float(np.min(values))
 
     @staticmethod
     def _repeat_row(values: np.ndarray, rows: int) -> np.ndarray:

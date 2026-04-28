@@ -101,6 +101,14 @@ def select_earliest_nlp_feasible(candidates: list[CandidateEvaluation]) -> Strat
     return _selection("earliest_nlp_feasible", selected, len(candidates), "selected_earliest_feasible")
 
 
+def select_latest_nlp_feasible(candidates: list[CandidateEvaluation]) -> StrategySelection:
+    feasible = [candidate for candidate in candidates if candidate.geometric_status == "accepted" and candidate.success]
+    if not feasible:
+        return _best_failed_selection("latest_nlp_feasible", candidates)
+    selected = max(feasible, key=lambda candidate: candidate.time)
+    return _selection("latest_nlp_feasible", selected, len(candidates), "selected_latest_feasible")
+
+
 def select_smart_cost(candidates: list[CandidateEvaluation]) -> StrategySelection:
     feasible = [candidate for candidate in candidates if candidate.geometric_status == "accepted" and candidate.success]
     if not feasible:

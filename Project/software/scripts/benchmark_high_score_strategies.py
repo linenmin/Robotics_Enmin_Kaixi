@@ -22,6 +22,7 @@ from optimal_control_planner import (
 from strategy_benchmark import (
     CandidateEvaluation,
     select_earliest_nlp_feasible,
+    select_latest_nlp_feasible,
     select_simple_geometric,
     select_smart_cost,
     summarize_strategy_rows,
@@ -36,6 +37,7 @@ def run_benchmark(
     max_candidate_distance: float,
     max_candidates: int,
     success_tolerance: float,
+    measurement_noise_std: float = 1e-3,
 ):
     robot = load_project_robot(SOFTWARE_DIR)
     tcp_pose = build_tcp_pose_function(robot)
@@ -48,7 +50,7 @@ def run_benchmark(
     candidate_rows = []
     strategy_rows = []
     for seed in seeds:
-        prediction, current_time = _make_prediction(seed)
+        prediction, current_time = _make_prediction(seed, measurement_noise_std=measurement_noise_std)
         candidates = _evaluate_common_candidate_pool(
             seed=seed,
             prediction=prediction,
@@ -68,6 +70,7 @@ def run_benchmark(
             [
                 select_simple_geometric(candidates).to_row(seed),
                 select_earliest_nlp_feasible(candidates).to_row(seed),
+                select_latest_nlp_feasible(candidates).to_row(seed),
                 select_smart_cost(candidates).to_row(seed),
             ]
         )
@@ -80,6 +83,7 @@ def run_benchmark(
             "max_candidate_distance_m": max_candidate_distance,
             "max_candidates": max_candidates,
             "success_tolerance_m": success_tolerance,
+            "measurement_noise_std_m": measurement_noise_std,
             "candidate_pool": "same future/height/workspace-filtered candidate list for every strategy",
             "success_definition": "NLP success, hoop-plane crossing inside hoop_radius - ball_radius, and zero safety penalty.",
         },
@@ -94,13 +98,14 @@ def run_benchmark(
     return metrics_path, summary_csv_path, payload
 
 
-def _make_prediction(seed: int):
+def _make_prediction(seed: int, measurement_noise_std: float = 1e-3):
     np.random.seed(seed)
     simulation = BallSimulation()
-    predictor = LinearKalmanTrajectoryPredictor(dt=0.01)
+    predictor = LinearKalmanTrajectoryPredictor(dt=0.01, measurement_std=measurement_noise_std)
     for _ in range(80):
         simulation.update(0.01)
-        predictor.step(simulation.get_positions()[0])
+        measurement = simulation.positions[0] + np.random.normal(0.0, measurement_noise_std, size=3)
+        predictor.step(measurement)
     return predictor.predict(horizon=0.8, dt=0.02), predictor.time
 
 
@@ -299,6 +304,7 @@ def parse_args():
     parser.add_argument("--max-candidate-distance", type=float, default=1.15)
     parser.add_argument("--max-candidates", type=int, default=8)
     parser.add_argument("--success-tolerance", type=float, default=0.03)
+    parser.add_argument("--measurement-noise-std", type=float, default=1e-3)
     return parser.parse_args()
 
 
@@ -310,6 +316,7 @@ if __name__ == "__main__":
         max_candidate_distance=args.max_candidate_distance,
         max_candidates=args.max_candidates,
         success_tolerance=args.success_tolerance,
+        measurement_noise_std=args.measurement_noise_std,
     )
     print(json.dumps(result["summary"], indent=2))
     print(f"metrics: {metrics_file}")

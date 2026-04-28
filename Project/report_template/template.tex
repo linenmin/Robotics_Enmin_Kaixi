@@ -43,12 +43,12 @@
 
 \subsection*{Setup and Experiment Design}
 
-The project asks the robot to move a hoop so that a flying ball passes through it. I treat the problem as one estimation and constrained planning pipeline. The system receives noisy Cartesian ball measurements, predicts the future ball path, selects candidate catch points, solves a UR10 trajectory optimization problem, and checks whether the ball center crosses the hoop plane inside the physical opening.
+The project asks the robot to move a hoop so that a flying ball passes through it. The solution treats the problem as one estimation and constrained planning pipeline. The system receives noisy Cartesian ball measurements, predicts the future ball path, selects candidate catch points, solves a UR10 trajectory optimization problem, and checks whether the ball center crosses the hoop plane inside the physical opening.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.86\linewidth]{../outputs/high_score/figure_system_block.png}
-    \caption{Pipeline used in all experiments. The candidate time, planned UR10 motion, and hoop-crossing check share the same clock.}
+    \includegraphics[width=0.62\linewidth]{../outputs/high_score/figure_system_block.png}
+    \caption{Pipeline used in all experiments. The shared clock prevents a strategy from winning through an inconsistent comparison between ball time and robot-plan time.}
     \label{fig:system}
 \end{figure}
 
@@ -60,17 +60,16 @@ The project asks the robot to move a hoop so that a flying ball passes through i
 \toprule
 Item & Value & Role in the report \\
 \midrule
-Ball radius & \(0.12\,\mathrm{m}\) & Defines the center clearance through the hoop \\
-Hoop radius & \(0.15\,\mathrm{m}\) & Gives \(0.03\,\mathrm{m}\) radial tolerance \\
-Measurement noise & \(1\,\mathrm{mm}\) Gaussian position noise & Drives the estimator design \\
+Ball and hoop radii & \(0.12,\,0.15\,\mathrm{m}\) & \(r_h-r_b=30\,\mathrm{mm}\) success tolerance \\
+Measurement noise & \(1\,\mathrm{mm}\) Gaussian position noise & \(R=\sigma^2 I_3\) in the Kalman update \\
 Robot base & Fixed & Removes mobile-base planning from the task \\
-Acceleration limit & \(2\,\mathrm{rad/s^2}\) & Hard NLP bound and benchmark diagnostic \\
+Acceleration limit & \(2\,\mathrm{rad/s^2}\) & \(|\ddot q_{k,j}|\le 2\) for every knot and joint \\
 Collision evidence & Table clearance and self-sphere proxy & Conservative check, not exact mesh proof \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-I use the four project tasks as separate experiments. Task 1 tests prediction error. Task 2 creates a simple geometric baseline. Task 3 tests whether the UR10 can execute a constrained hoop motion. Task 4 compares candidate-selection policies on the same predicted trajectories and the same success definition.
+The four project tasks define separate experiments. Task 1 tests prediction error. Task 2 creates a simple geometric baseline. Task 3 tests whether the UR10 can execute a constrained hoop motion. Task 4 compares candidate-selection policies on the same predicted trajectories and the same success definition.
 
 \subsection*{Task 1: Predicting the Ball}
 
@@ -85,22 +84,22 @@ The validation reports measurement error, filtered error, future-prediction erro
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\linewidth]{../outputs/task1/task1_trajectory_prediction.png}
-    \caption{Kalman-filter prediction for one seed. The future prediction continues the gravity-driven parabola from the filtered state.}
+    \caption{Kalman-filter prediction for one seed. The 50-seed validation keeps the 0.5 s future-prediction error below \(6.35\,\mathrm{mm}\) at the 95th percentile, which is well inside the \(30\,\mathrm{mm}\) hoop clearance.}
     \label{fig:task1}
 \end{figure}
 
-I also tested whether this conclusion depends on the exact 1 mm noise value. Figure~\ref{fig:noise} sweeps measurement noise from 1 to 10 mm. The mean 0.5 s prediction RMSE rises from \(3.67\) to \(10.34\,\mathrm{mm}\), and the maximum observed RMSE remains \(20.01\,\mathrm{mm}\). The predictor still stays below the hoop clearance in this sweep. This does not prove arbitrary robustness, but it shows that the filter has useful margin around the stated simulator noise.
+The robustness test checks whether this conclusion depends on the exact 1 mm noise value. Figure~\ref{fig:noise} sweeps measurement noise from 1 to 10 mm. The mean 0.5 s prediction RMSE rises from \(3.67\) to \(10.34\,\mathrm{mm}\), and the maximum observed RMSE remains \(20.01\,\mathrm{mm}\). A downstream Task 4 sweep over 20 seeds per noise level keeps the time-first success rate at 95\% from 1 to 10 mm. This result shows useful margin around the stated simulator noise, although the main report still uses the project-specified 1 mm setting.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.56\linewidth]{../outputs/high_score/figure_noise_sensitivity.png}
-    \caption{Task 1 noise sensitivity over 50 seeds per noise level. The dashed line marks the \(30\,\mathrm{mm}\) radial clearance left by the ball and hoop radii.}
+    \includegraphics[width=0.60\linewidth]{../outputs/high_score/figure_noise_sensitivity.png}
+    \caption{Noise sensitivity. Prediction error grows with measurement noise, but it remains below the \(30\,\mathrm{mm}\) clearance, and the downstream time-first strategy keeps 95\% success in the 20-seed sweep.}
     \label{fig:noise}
 \end{figure}
 
 \subsection*{Task 2: Simple Interception Point}
 
-Task 2 asks for a simple interception strategy, so I deliberately use a geometric rule instead of robot optimization. The selector samples the predicted trajectory and rejects points that occur too soon, sit below \(z=0.35\,\mathrm{m}\), or lie too far from the current hoop center. It then chooses the earliest remaining point. For the validation seed, this rule selected \(t=1.36\,\mathrm{s}\) and position \([1.224,-0.119,1.074]\,\mathrm{m}\).
+Task 2 asks for a simple interception strategy, so the baseline deliberately uses a geometric rule instead of robot optimization. The selector samples the predicted trajectory and rejects points that occur too soon, sit below \(z=0.35\,\mathrm{m}\), or lie too far from the current hoop center. It then chooses the earliest remaining point. For the validation seed, this rule selected \(t=1.36\,\mathrm{s}\) and position \([1.224,-0.119,1.074]\,\mathrm{m}\).
 
 This baseline has a clear purpose: it answers where the ball could be caught in Cartesian space. It does not answer whether the UR10 can move the hoop there quickly enough. The later benchmark keeps this baseline honest. Across 50 seeds, the simple selector attempts an early catch at \(1.295\,\mathrm{s}\) on average, but none of those attempts pass the full NLP and hoop-crossing check. The attempted time is useful as a lower bound, not as a successful interception time.
 
@@ -127,55 +126,56 @@ w_p\|p_{\mathrm{tcp}}(q_N)-p^\star\|_2^2
 & q_{\min}\le q_k\le q_{\max},\quad
 -\dot q_{\max}\le \dot q_k\le \dot q_{\max},\quad
 -\ddot q_{\max}\le \ddot q_k\le \ddot q_{\max},\\
-& z_{\mathrm{tcp}}(q_k)\ge h_{\mathrm{table}}+m_{\mathrm{tcp}} .
+& z_{\mathrm{tcp}}(q_k)\ge h_{\mathrm{table}}+m_{\mathrm{tcp}},\quad
+R_{zz}(q_k)\ge0,\qquad \forall k .
 \end{aligned}
 \]
-The validation uses \(N=28\), \(\Delta t=0.05\,\mathrm{s}\), \(w_p=1500\), \(w_u=2\times 10^{-2}\), \(w_v=10^{-3}\), and \(w_o=10\). Pinocchio supplies the URDF-based forward kinematics, including the TCP position and rotation. CasADi builds the symbolic nonlinear program, and IPOPT solves it.
+The validation uses \(N=28\), \(\Delta t=0.05\,\mathrm{s}\), \(w_p=1500\), \(w_u=2\times 10^{-2}\), \(w_v=10^{-3}\), and \(w_o=10\). The inequality \(R_{zz}(q_k)\ge0\) enforces the project requirement that the hoop top side never faces the ground; the terminal orientation cost only regularizes the final pose. Pinocchio supplies the URDF-based forward kinematics, including the TCP position and rotation. CasADi builds the symbolic nonlinear program, and IPOPT solves it.
 
-For the Task 2 target, the NLP reduced the hoop-target distance from \(0.731\,\mathrm{m}\) to \(0.020\,\mathrm{m}\). It solved in \(0.075\,\mathrm{s}\) and 14 IPOPT iterations on the test machine. The maximum joint acceleration reached \(1.9996\,\mathrm{rad/s^2}\), and the maximum velocity ratio was \(0.640\). The planned trajectory respected all position, velocity, and acceleration bounds.
+For the Task 2 target, the NLP reduced the hoop-target distance from \(0.731\,\mathrm{m}\) to \(0.020\,\mathrm{m}\). It solved in \(0.071\,\mathrm{s}\) and 15 IPOPT iterations on the test machine. The maximum joint acceleration reached \(1.9996\,\mathrm{rad/s^2}\), the maximum velocity ratio was \(0.640\), and the minimum \(R_{zz}\) value was 0.732. The planned trajectory respected all position, velocity, acceleration, and hoop-top constraints.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.80\linewidth]{../outputs/task3/task3_layer1_plan.png}
-    \caption{Task 3 finite-horizon NLP result. The planned hoop center moves toward the selected Task 2 target and reaches \(20.1\,\mathrm{mm}\) terminal TCP error.}
+    \caption{Task 3 finite-horizon NLP result. The planned hoop center reaches \(20.1\,\mathrm{mm}\) terminal TCP error while the optimizer maintains the path constraints used in the report.}
     \label{fig:task3}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.82\linewidth]{../outputs/task3/task3_joint_limits.png}
-    \caption{Joint position, velocity, and acceleration profiles for the same Task 3 plan. Dashed lines mark the velocity and acceleration limits. Dotted horizontal lines mark joint-position limits.}
+    \caption{Joint profiles for the same Task 3 plan. The acceleration approaches but does not exceed the \(\pm2\,\mathrm{rad/s^2}\) bound, and joint 2 dominates the velocity budget at 64\% of its limit.}
     \label{fig:joints}
 \end{figure}
 
-The safety checks support the same conclusion. The minimum TCP-table clearance was \(0.622\,\mathrm{m}\), the minimum frame-table clearance was \(0.115\,\mathrm{m}\), and the minimum self-sphere clearance was \(0.163\,\mathrm{m}\). These checks do not replace exact mesh collision detection. They give conservative evidence that the submitted motion does not use a visibly unsafe configuration.
+The safety checks support the same conclusion. The minimum TCP-table clearance was \(0.622\,\mathrm{m}\), the minimum frame-table clearance was \(0.115\,\mathrm{m}\), and the minimum self-sphere clearance was \(0.163\,\mathrm{m}\). Table clearance and hoop orientation enter the NLP as hard path constraints. Self-collision remains a post hoc sphere-based proxy rather than an exact mesh constraint.
 
 \subsection*{Task 4: Smarter Interception}
 
-Task 4 asks for a smarter strategy that improves success rate and interception time. I do not compare the final strategy against a successful Task 2 time, because the simple strategy has no successful catches under the full criterion. Instead, I report the Task 2 attempted time and then evaluate feasible strategies that can actually catch the ball.
+Task 4 asks for a smarter strategy that improves success rate and interception time. The simple Task 2 strategy has no successful catches under the full criterion, so its \(1.295\,\mathrm{s}\) attempted time is not a successful interception baseline. The time comparison uses two successful feasible baselines: a late-feasible strategy that waits for the latest feasible candidate, and a time-first feasible strategy that chooses the earliest feasible candidate.
 
-The smarter strategy changes the decision rule, not the simulator. It forms a shared candidate pool from the predicted trajectory, runs the Task 3 NLP for each shortlisted candidate, and accepts only candidates that satisfy three conditions: the NLP succeeds, the ball crosses the hoop plane, and the radial crossing error stays within \(0.03\,\mathrm{m}\). The time-first feasible policy then selects the earliest candidate that passes these tests. I also report a balanced-cost policy as an ablation. It uses the same candidate evaluations but trades extra catch time for lower radial error and lower control usage.
+The smarter strategy changes the decision rule, not the simulator. It forms a shared candidate pool from the predicted trajectory, runs the Task 3 NLP for each shortlisted candidate, and accepts only candidates that satisfy three conditions: the NLP succeeds, the ball crosses the hoop plane, and the radial crossing error stays within \(0.03\,\mathrm{m}\). This success metric is stricter than the project's collision-disregarding assumption: the ball center must clear the ring with \(r_h-r_b=30\,\mathrm{mm}\) margin. The time-first feasible policy then selects the earliest candidate that passes these tests. A balanced-cost policy is also reported as an ablation because it trades extra catch time for lower radial error and lower control usage.
 
-I added a small pose-aware term for Task 4 candidate evaluation. The term encourages the hoop normal to align with the local ball-flight direction through \(w_n(1-(n_{\mathrm{hoop}}^\top \hat v_{\mathrm{ball}})^2)\), with \(w_n=5\). This term follows the physical success metric: a ball passes through a hoop opening, not just through a point in space. A larger weight reduced success in tuning, so I kept it as a weak geometric preference rather than a dominant objective.
+Task 4 candidate evaluation also uses a small pose-aware term. The term encourages the hoop normal to align with the local ball-flight direction through \(w_n(1-(n_{\mathrm{hoop}}^\top \hat v_{\mathrm{ball}})^2)\), with \(w_n=5\). This term follows the physical success metric: a ball passes through a hoop opening, not just through a point in space. A larger weight reduced success in tuning, so the final controller keeps it as a weak geometric preference rather than a dominant objective.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.91\linewidth]{../outputs/high_score/figure_task2_task4_side_by_side.png}
-    \caption{Task 2 and Task 4 geometry in a shared side view. Red marks the simple geometric candidate, yellow marks the smarter selected candidate, and green marks the ball near the catch.}
+    \caption{Task 2 and Task 4 geometry in a shared side view. The simple candidate is earlier but infeasible, while the smarter candidate aligns with a UR10 pose that lets the ball pass through the hoop.}
     \label{fig:side}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\linewidth]{../outputs/high_score/figure_candidate_cost_landscape.png}
-    \caption{Candidate diagnostics for seed 0. Green vertical bands indicate successful candidates. The early points look attractive in time, but they miss the hoop plane or require saturated motion.}
+    \caption{Candidate diagnostics for seed 0. Hatched bands mark successful candidates; the first stable feasibility plateau starts near \(1.38\,\mathrm{s}\), after the earlier low-time candidates miss the hoop crossing.}
     \label{fig:cost}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.90\linewidth]{../outputs/high_score/figure_strategy_benchmark.png}
-    \caption{Fifty-seed strategy benchmark. The time-first feasible policy provides the report's main Task 4 result. The balanced-cost policy shows the accuracy-effort tradeoff.}
+    \caption{Fifty-seed strategy benchmark. Time-first feasible matches the 96\% success rate of late feasible but catches about one control tick earlier; balanced cost spends time for lower radial error.}
     \label{fig:benchmark}
 \end{figure}
 
@@ -188,32 +188,33 @@ I added a small pose-aware term for Task 4 candidate evaluation. The term encour
 Strategy & Success & Time [s] & TCP [mm] & Radial [mm] & Max \(\ddot q\) & IPOPT \\
 \midrule
 Simple geometric & 0\% & 1.295* & -- & -- & -- & -- \\
+Late feasible & 96\% & 1.433 & 2.24 & 3.66 & 1.95 & 13.8 it. \\
 Time-first feasible & 96\% & 1.383 & 16.5 & 9.21 & 2.00 & 14.0 it. \\
-Balanced cost & 96\% & 1.421 & 2.02 & 3.62 & 1.93 & 13.7 it. \\
+Balanced cost & 96\% & 1.421 & 2.02 & 3.62 & 1.93 & 13.8 it. \\
 \bottomrule
 \end{tabular}
 \end{table}
 \vspace{-2mm}
 {\footnotesize *The simple time is an attempted catch time, not a successful interception time.}
 
-The main Task 4 result is the time-first feasible policy. It raises the full-system success rate from 0\% for the simple baseline to 96\%, while preserving the earliest successful catch among evaluated candidates. The balanced-cost policy keeps the same success rate and improves radial error from \(9.21\) to \(3.62\,\mathrm{mm}\), but it catches later. This experiment directly addresses the earlier ambiguity: the submitted ``smarter'' answer for time is the feasibility-aware time-first policy, and the balanced policy demonstrates the tradeoff rather than replacing the time objective.
+The main Task 4 result is the time-first feasible policy. It raises the full-system success rate from 0\% for the simple baseline to 96\%. Among successful strategies, it also catches \(0.051\,\mathrm{s}\) earlier than the late-feasible baseline, which is essentially one \(0.05\,\mathrm{s}\) control tick. The balanced-cost policy keeps the same success rate and improves radial error from \(9.21\) to \(3.62\,\mathrm{mm}\), but it catches later. This separates the two design goals: time-first feasible answers the shorter-time requirement, while balanced cost shows the accuracy-effort tradeoff.
 
 \subsection*{Failure Analysis and Limits}
 
-Two of the 50 seeds fail for the time-first feasible policy. Figure~\ref{fig:failure} shows why. Their candidate errors remain outside the \(30\,\mathrm{mm}\) crossing tolerance until the latest tested candidates, and the candidate pool ends before a robust feasible crossing appears. This is a planning-window and candidate-pool limitation, not a Kalman-filter failure.
+Two of the 50 seeds fail for the time-first feasible policy. Figure~\ref{fig:failure} shows why. Their candidate errors remain outside the \(30\,\mathrm{mm}\) crossing tolerance until the latest tested candidates. A mitigation run with 16 candidates and a looser \(1.35\,\mathrm{m}\) workspace radius did not recover either seed. Seed 41 came closest at \(35.1\,\mathrm{mm}\), so the remaining failure is mainly hoop-crossing geometry rather than estimator divergence.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.58\linewidth]{../outputs/high_score/figure_failure_diagnostics.png}
-    \caption{Failure-case diagnosis for seeds 11 and 41. The radial crossing error remains above tolerance for the evaluated feasible window.}
+    \caption{Failure-case diagnosis for seeds 11 and 41. Seed 41 approaches the \(30\,\mathrm{mm}\) tolerance at the end of the window, while seed 11 stays far outside it; increasing the candidate count did not recover either case.}
     \label{fig:failure}
 \end{figure}
 
-The simulator includes a ground bounce model. The Kalman model used here assumes pre-bounce ballistic flight. If a selected trajectory crosses a bounce, the estimator would need a switching model or an interacting multiple-model filter. I keep the submitted experiments in the pre-bounce catching regime. The collision evidence also remains approximate, because the implementation checks table clearance and sphere-based self-clearance rather than exact mesh collision.
+The simulator includes a ground bounce model. The Kalman model used here assumes pre-bounce ballistic flight. If a selected trajectory crosses a bounce, the estimator would need a switching model or an interacting multiple-model filter. The submitted experiments stay in the pre-bounce catching regime. The collision evidence also remains approximate, because the implementation checks table clearance and sphere-based self-clearance rather than exact mesh collision.
 
 \subsection*{Conclusion}
 
-The final system gives a complete offline solution for the reverse-hoops task. The Kalman filter predicts the ball with millimetre-level error under the stated noise. The Task 2 rule provides a transparent geometric baseline. The Task 3 NLP produces a bounded UR10 motion with explicit dynamics, joint limits, safety checks, and solver diagnostics. The Task 4 time-first feasible policy gives the strongest final result: 96\% full hoop-crossing success across 50 seeds at \(1.383\,\mathrm{s}\) mean successful catch time. The balanced-cost ablation shows how much accuracy one can gain by spending roughly \(0.038\,\mathrm{s}\) of extra catch time.
+The final system gives a complete offline solution for the reverse-hoops task. The Kalman filter predicts the ball with millimetre-level error under the stated noise. The Task 2 rule provides a transparent geometric baseline. The Task 3 NLP produces a bounded UR10 motion with explicit dynamics, joint limits, hoop-orientation constraints, safety checks, and solver diagnostics. The Task 4 time-first feasible policy gives the strongest final result: 96\% full hoop-crossing success across 50 seeds at \(1.383\,\mathrm{s}\) mean successful catch time. It is about one control tick faster than late feasible, while balanced cost shows how much accuracy one can gain by spending roughly one control tick.
 
 \clearpage
 \section*{References}

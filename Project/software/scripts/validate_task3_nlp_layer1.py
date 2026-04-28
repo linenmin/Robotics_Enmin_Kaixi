@@ -74,6 +74,7 @@ def compute_metrics(result, target_position, initial_tcp, limits):
         "solve_time_s": float(result.solve_time_s),
         "iter_count": int(result.iter_count),
         "terminal_normal_alignment": None if np.isnan(result.terminal_normal_alignment) else float(result.terminal_normal_alignment),
+        "min_tcp_top_z": float(result.min_tcp_top_z),
         "q_has_nan": bool(np.isnan(result.q).any()),
         "dq_has_nan": bool(np.isnan(result.dq).any()),
         "ddq_has_nan": bool(np.isnan(result.ddq).any()),

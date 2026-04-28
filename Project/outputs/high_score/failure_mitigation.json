@@ -1,0 +1,25 @@
+{
+  "failed_seeds": [
+    11,
+    41
+  ],
+  "mitigation_test": "max_candidates=16 and max_candidate_distance=1.35 m for seeds 11 and 41; success_count=0/2",
+  "rows": [
+    {
+      "seed": 11,
+      "best_candidate_time_s": 1.4200000000000004,
+      "best_radial_error_m": 0.13912916824288676,
+      "latest_candidate_time_s": 1.4400000000000004,
+      "latest_radial_error_m": 0.17048737068882183,
+      "mitigation": "A separate run with 16 candidates and 1.35 m workspace radius did not recover this seed."
+    },
+    {
+      "seed": 41,
+      "best_candidate_time_s": 1.4400000000000004,
+      "best_radial_error_m": 0.03510637842909316,
+      "latest_candidate_time_s": 1.4400000000000004,
+      "latest_radial_error_m": 0.03510637842909316,
+      "mitigation": "A separate run with 16 candidates and 1.35 m workspace radius did not recover this seed."
+    }
+  ]
+}
