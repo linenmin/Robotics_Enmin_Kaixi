@@ -483,3 +483,31 @@ Verification:
 - Body pages are pages 2-6, 5 pages total.
 - Visual inspection passed after fixing the report-map table spacing.
 - Banned wording and sentence-pattern scan returned no matches.
+
+### Phase 7 Experiment-Rationale Revision
+
+User feedback: the report-map table was unnecessary for a short report, and the report needed more visible experimental reasoning. The revised report removes the map and uses the space for experiment design choices.
+
+Updated:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\report_template\template.tex`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\report_template\final_report_revised.pdf`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\report_template\rendered_pages\page-1.png` through `page-7.png`
+
+Revision changes:
+
+- removed the report-map table;
+- added a short experimental-design paragraph in the setup section;
+- expanded Task 1 to explain why the validation uses measurement RMSE, filtered RMSE, future-prediction RMSE, and covariance checks;
+- expanded Task 2 to explain the purpose of the simple baseline, the rough workspace threshold, and the rejection-count evidence;
+- expanded Task 3 to explain why a finite-horizon NLP was chosen instead of a single-step pseudo-inverse controller;
+- expanded Task 4 to explain why the experiment compares simple geometric, earliest NLP-feasible, and smart cost strategies on the same candidate pool.
+
+Verification:
+
+- Tectonic compilation succeeded.
+- Exported 7 pages total.
+- Body pages are pages 2-6, 5 pages total.
+- Visual inspection passed for the revised setup, Task 2/3 transition, Task 4 benchmark page, and final summary page.
+- Banned wording and sentence-pattern scan returned no matches.
+- `final_report.pdf` could not be overwritten because another process had the file open, so the current compiled revision is saved as `final_report_revised.pdf`.
