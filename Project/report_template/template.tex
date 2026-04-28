@@ -1,0 +1,70 @@
+\documentclass[a4paper,10pt]{article}
+
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage[colorlinks, linkcolor=black, citecolor=black, urlcolor=black]{hyperref}
+\usepackage{geometry}
+\usepackage{ifthen}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{microtype}
+
+\geometry{tmargin=1.8cm, bmargin=1.9cm, lmargin=1.7cm, rmargin=1.7cm}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{3pt}
+\setlength{\textfloatsep}{6pt plus 2pt minus 2pt}
+\setlength{\floatsep}{6pt plus 2pt minus 2pt}
+\setlength{\intextsep}{6pt plus 2pt minus 2pt}
+\captionsetup{font=small, skip=4pt}
+\renewcommand{\arraystretch}{1.03}
+\raggedbottom
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{5}
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\bottomfraction}{0.9}
+\renewcommand{\textfraction}{0.04}
+\renewcommand{\floatpagefraction}{0.8}
+
+\begin{document}
+\newboolean{anonymize}
+% \setboolean{anonymize}{true}
+
+\input{titlepage}
+
+\small
+
+\section*{Reverse-Hoops-Playing Robot Arm}
+
+\paragraph{Problem setup.}
+% Keep this section below roughly 180 words.
+% State the robot, ball model, measurement noise, and core assumptions.
+
+\paragraph{Ball trajectory prediction.}
+% Task 1. Explain the chosen filter, model, measurement update, and validation.
+
+\paragraph{Simple interception strategy.}
+% Task 2. Explain the simple rule for choosing a point on the predicted trajectory.
+
+\paragraph{Optimization-based robot control.}
+% Task 3. Define optimization variables, objective terms, hard constraints, and how the ring orientation/collision constraints are handled.
+
+\paragraph{Smarter interception strategy.}
+% Task 4. Explain the improved candidate selection strategy and compare it with the simple strategy.
+
+\paragraph{Results and limitations.}
+% Summarize success rate, interception time, constraint violations, and failure cases.
+
+\paragraph{Conclusion.}
+% Keep this concise. State what works, what remains approximate, and the main evidence.
+
+\clearpage
+\section*{References}
+% Add course slides and any external references here.
+
+\end{document}

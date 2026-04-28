@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "reason": "accepted",
+  "selected_index": 25,
+  "selected_time_s": 1.3200000000000005,
+  "selected_position_m": [
+    1.3355049220839879,
+    -0.1161277679054675,
+    1.3608035379724712
+  ],
+  "selected_from_prediction": true,
+  "selected_is_future": true,
+  "selected_above_z_min": true,
+  "selected_has_nan": false,
+  "selected_within_tcp_distance": true,
+  "max_tcp_distance_m": 1.0,
+  "num_candidates_checked": 26,
+  "num_accepted_candidates_seen": 1,
+  "candidate_status_counts": {
+    "too_soon": 6,
+    "too_far": 19,
+    "accepted": 1
+  }
+}

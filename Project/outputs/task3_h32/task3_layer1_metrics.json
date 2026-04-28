@@ -1,0 +1,34 @@
+{
+  "success": true,
+  "status": "Solve_Succeeded",
+  "initial_tcp_distance_m": 1.2686877726744612,
+  "terminal_tcp_distance_m": 0.5490789972473702,
+  "distance_reduction_m": 0.719608775427091,
+  "terminal_error_m": 0.5490789972473702,
+  "objective_value": 456.4034083602875,
+  "q_has_nan": false,
+  "dq_has_nan": false,
+  "ddq_has_nan": false,
+  "max_abs_ddq": 1.9987619655159214,
+  "max_abs_dq_ratio": 0.5676393159265216,
+  "q_within_limits": true,
+  "dq_within_limits": true,
+  "ddq_within_limits": true,
+  "first_ddq": [
+    -0.3155635963217955,
+    1.2599778933814336,
+    -1.9987619655159214,
+    -0.19506297411874765,
+    0.4997980049314387,
+    -0.056630407965906314
+  ],
+  "safety": {
+    "min_tcp_top_z": 0.4892042317597689,
+    "ring_top_faces_ground": false,
+    "min_tcp_table_clearance_m": 0.6216080180212177,
+    "min_frame_table_clearance_m": 0.1148,
+    "min_self_sphere_clearance_m": -0.03694019502035467,
+    "table_height_m": 0.0125,
+    "self_sphere_radius_m": 0.1
+  }
+}

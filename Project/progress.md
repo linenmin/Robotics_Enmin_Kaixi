@@ -131,3 +131,213 @@ to point to:
 ```text
 D:/Anaconda3/envs/robotics/Library/share/example-robot-data/robots
 ```
+
+### Known Conditions Table
+
+Created:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\known_conditions.md`
+
+Contents include:
+
+- task summary and scene objects
+- ball simulation parameters
+- UR10 joint names, limits, and initial configuration
+- control loop frequencies and simulation duration
+- hard constraints from the PDF
+- currently implemented modules vs missing modules
+- first-version implementation roadmap
+
+Key discovery:
+
+- the platform is not mobile; `world_joint` is fixed, and there are no wheel/mobile-base joints in the URDF.
+- the current notebook uses `np.clip(...)` without assignment, so limit clipping is not actually applied yet.
+
+### Course Knowledge Map
+
+Created:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\course_knowledge_map.md`
+
+Rendered key lecture pages into visual contact sheets:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\course_page_images\task1_state_estimation.png`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\course_page_images\task2_interception_planning.png`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\course_page_images\task3_optimization_control.png`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\course_page_images\task3_constraints.png`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\course_page_images\task4_smarter_strategy.png`
+
+Mapped the project tasks to:
+
+- C6 Bayes/Kalman filtering and tracking process models for ball trajectory prediction.
+- C5 motion planning, signed distance functions, optimal control, and sampling for interception point selection.
+- C3 task-space control, resolved acceleration control, damped pseudo-inverse, and stack of tasks for robot control.
+- C4 constraint-based programming for acceleration/velocity/position constraints and instantaneous optimization.
+- C3 minimum jerk notes for the tradeoff between shorter interception time and higher peak velocity/acceleration.
+
+### Agent Protocol and Report Template
+
+Created:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\AGENT_PROTOCOL.md`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\report_template\template.tex`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\report_template\titlepage.tex`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\report_template\assets\sedes.pdf`
+
+Protocol decisions:
+
+- each PDF task uses a 5-phase workflow: Task Brief, Decision Memo, Implementation, Result Review, Report Integration.
+- decision memos must stay under 500 Chinese words and present options when there is a real tradeoff.
+- report text must be in English, concise, direct, and tied to course vocabulary.
+- final LaTeX output must use Tectonic when available, then PDF pages must be rendered to images for visual inspection.
+
+Tectonic status:
+
+- `tectonic` was not found on the current `PATH`.
+- search under `D:\BaiduNetdiskWorkspace\Leuven\8th\ANN & DL` did not find a `tectonic` executable.
+- found Codex plugin Tectonic at `C:\Users\Lem17\.codex\plugins\cache\openai-bundled\latex-tectonic\0.1.0\bin\tectonic.exe`.
+- verified Tectonic 0.16.9 can compile `Project/report_template/template.tex`.
+
+### Task 1 Entry
+
+Created:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\task1_decision_memo.md`
+
+Decision memo recommendation:
+
+- implement a linear Kalman filter for ball trajectory prediction.
+- use state `[px, py, pz, vx, vy, vz]`.
+- treat gravity as a known input.
+- use the measured ball position as the Kalman measurement.
+- validate with measured/filtered/predicted trajectory plots and prediction error checks.
+
+Protocol update:
+
+- every decision memo must now define explicit task completion criteria before implementation starts.
+- result reviews must compare implementation results against those criteria.
+
+### Task 1 Implementation
+
+Created:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\trajectory_predictor.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\tests\test_trajectory_predictor.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\scripts\validate_task1_prediction.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\task1_result_review.md`
+
+Verification:
+
+```powershell
+conda run -n robotics python -m unittest tests.test_trajectory_predictor
+conda run -n robotics python scripts\validate_task1_prediction.py --seed 7 --output-dir ..\outputs\task1
+```
+
+Results:
+
+- unit tests passed: 2 tests.
+- measurement RMSE: `0.001815 m`.
+- filtered RMSE: `0.000981 m`.
+- covariance symmetric: `true`.
+- minimum covariance eigenvalue: `1.46e-07`.
+- predictions contain only future timestamps and no NaN.
+
+Generated evidence:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task1\task1_metrics.json`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task1\task1_trajectory_prediction.png`
+
+### Task 2 Entry
+
+Created:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\task2_decision_memo.md`
+
+Decision memo recommendation:
+
+- implement a simple interception point selector.
+- sample candidate points from the Task 1 predicted trajectory.
+- filter by future time, height, rough workspace distance, and distance from the initial `tcp`.
+- choose the earliest feasible candidate.
+- keep strict joint/collision feasibility for Task 3 and smarter scoring for Task 4.
+
+### Task 2 Implementation
+
+Created:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\interception_selector.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\tests\test_interception_selector.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\scripts\validate_task2_interception.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\task2_result_review.md`
+
+Verification:
+
+```powershell
+conda run -n robotics python -m unittest tests.test_interception_selector tests.test_trajectory_predictor
+conda run -n robotics python scripts\validate_task2_interception.py --seed 7 --output-dir ..\outputs\task2
+```
+
+Results:
+
+- unit tests passed: 6 tests.
+- selected index: `23`.
+- selected time: `1.280 s`.
+- selected position: `[1.447, -0.113, 1.632] m`.
+- selected point comes from predicted trajectory, is future-only, is above `z_min`, and has no NaN.
+
+Generated evidence:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task2\task2_metrics.json`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task2\task2_interception_selection.png`
+
+Task 2 threshold update:
+
+- `max_tcp_distance` default changed from `1.35 m` to `0.85 m` after Task 3 feasibility testing.
+- The selected point changed to index `27`, time `1.360 s`, position `[1.224, -0.119, 1.074] m`.
+- This remains a simple feasibility filter, not Task 4 smarter scoring.
+
+### Task 3 Entry
+
+Created:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\task3_decision_memo.md`
+
+Decision memo recommendation:
+
+- user approved switching Task 3 from方案 A to方案 B for higher score potential.
+- implement a multi-step optimal-control NLP with `q,dq,ddq` over a horizon.
+- first build a runnable layer with discrete dynamics, joint limits, terminal `tcp` objective, and control smoothness.
+- then add ring orientation and conservative table/bounding-sphere safety metrics.
+- validate table/ring/self-collision with conservative geometric approximations first, because the loaded collision model currently has zero collision pairs.
+
+### Task 3 Implementation
+
+Created:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\optimal_control_planner.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\tests\test_optimal_control_planner.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\tests\test_safety_metrics.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\scripts\validate_task3_nlp_layer1.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\task3_result_review.md`
+
+Verification:
+
+```powershell
+conda run -n robotics python -m unittest tests.test_safety_metrics tests.test_optimal_control_planner tests.test_interception_selector tests.test_trajectory_predictor
+conda run -n robotics python scripts\validate_task3_nlp_layer1.py --task2-metrics ..\outputs\task2\task2_metrics.json --output-dir ..\outputs\task3 --horizon-steps 28 --dt 0.05
+```
+
+Results:
+
+- unit tests passed: 9 tests.
+- solver status: `Solve_Succeeded`.
+- terminal tcp-target error: `0.020 m`.
+- max absolute acceleration: `1.9996 rad/s^2`.
+- joint position, velocity, and acceleration limits satisfied.
+- ring top does not face the ground: `min_tcp_top_z = 0.732`.
+- table and approximate self-sphere safety metrics are positive.
+
+Generated evidence:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task3\task3_layer1_metrics.json`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task3\task3_layer1_plan.png`

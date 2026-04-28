@@ -38,7 +38,7 @@ conda activate robotics
 
 ## Phase 2: 整理题目条件和任务要求
 
-**Status:** pending
+**Status:** in_progress
 
 ### Tasks
 
@@ -46,13 +46,14 @@ conda activate robotics
 - [x] 阅读 `software/hoops.ipynb` 当前代码骨架。
 - [x] 阅读 `utils/ball_simulation.py` 和 `utils/transformations.py`。
 - [x] 初步阅读 `robot_description/ur10_robot.urdf`。
-- [ ] 用可视化确认机器人、篮筐、球、桌子的空间关系。
-- [ ] 整理所有硬性约束：关节位置、速度、加速度、篮筐朝向、碰撞、球/篮筐半径。
-- [ ] 整理所有需要我们实现的空白模块。
+- [x] 用可视化确认机器人、篮筐、球、桌子的空间关系。
+- [x] 整理所有硬性约束：关节位置、速度、加速度、篮筐朝向、碰撞、球/篮筐半径。
+- [x] 整理所有需要我们实现的空白模块。
+- [x] 创建 `known_conditions.md` 已知条件表。
 
 ## Phase 3: 翻找课件并对齐高分关键点
 
-**Status:** pending
+**Status:** in_progress
 
 ### Candidate Course Materials
 
@@ -78,14 +79,15 @@ conda activate robotics
 
 ### Tasks
 
-- [ ] 提取每份相关课件的目录和关键词。
-- [ ] 找到与项目四个 task 直接对应的课程公式/方法。
-- [ ] 建立“项目任务 -> 课程知识点 -> 可实现代码”的映射表。
-- [ ] 标注报告中应该主动解释的设计选择。
+- [x] 提取每份相关课件的目录和关键词。
+- [x] 找到与项目四个 task 直接对应的课程公式/方法。
+- [x] 建立“项目任务 -> 课程知识点 -> 可实现代码”的映射表。
+- [x] 标注报告中应该主动解释的设计选择。
+- [x] 创建 `course_knowledge_map.md`。
 
 ## Phase 4: 制定代码调试反馈级别人和 agent 交互计划
 
-**Status:** pending
+**Status:** in_progress
 
 ### Draft Rules
 
@@ -98,10 +100,11 @@ conda activate robotics
 
 ### Tasks
 
-- [ ] 写出项目调试协议。
-- [ ] 写出 notebook 运行/截图/日志的反馈模板。
-- [ ] 写出每个算法模块的验收标准。
-- [ ] 决定是否需要建立分支、测试脚本或实验记录目录。
+- [x] 写出项目调试协议。
+- [x] 写出 notebook 运行/截图/日志的反馈模板。
+- [x] 写出每个算法模块的验收标准。
+- [x] 决定是否需要建立分支、测试脚本或实验记录目录。
+- [x] 创建 `AGENT_PROTOCOL.md` 和 `report_template/`。
 
 ## Errors Encountered
 
@@ -113,4 +116,4 @@ conda activate robotics
 
 ## Next Action
 
-环境已打通。下一步进入课件提取和任务条件整理。
+Task 3 的多步 NLP 控制器已通过第一版高分路线验收。下一步进入 Task 4：基于优化可达性和时间/约束代价，升级接球点选择策略。

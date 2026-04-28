@@ -5,3 +5,11 @@ __pycache__/
 *.log
 .DS_Store
 Thumbs.db
+*.aux
+*.out
+*.toc
+*.xdv
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.executed*.ipynb

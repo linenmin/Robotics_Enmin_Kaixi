@@ -1,0 +1,10 @@
+{
+  "measurement_rmse_m": 0.001815177954666234,
+  "filtered_rmse_m": 0.0009813844451445114,
+  "final_filtered_error_m": 0.0012617495440509865,
+  "covariance_is_symmetric": true,
+  "min_covariance_eigenvalue": 1.4598244124150855e-07,
+  "prediction_has_only_future_times": true,
+  "prediction_has_nan": false,
+  "num_prediction_points": 26
+}
