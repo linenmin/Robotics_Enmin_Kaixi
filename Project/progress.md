@@ -409,6 +409,7 @@ Generated evidence:
 - `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task4\task4_meshcat_replay_seed0.html` (local standalone Meshcat replay, intentionally ignored by git because it is large)
 - `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task4\task4_report_mesh_scene_seed0_cropped.png`
 - `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task4\task4_report_mesh_scene_seed0_side_cropped.png`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task4\task4_side_mesh_with_task2_markers_cropped.png`
 
 Full UR10 Meshcat replay:
 
@@ -421,4 +422,5 @@ Report static UR10 mesh scene:
 ```powershell
 conda run -n robotics python scripts\render_task4_meshcat_report_scene.py --seed 0
 conda run -n robotics python scripts\render_task4_meshcat_report_scene.py --seed 0 --camera-view side --output-html ..\outputs\task4\task4_report_mesh_scene_seed0_side.html
+conda run -n robotics python scripts\render_task4_meshcat_report_scene.py --seed 0 --camera-view side --show-target-markers --simple-max-distance 1.0 --output-html ..\outputs\task4\task4_side_mesh_with_task2_markers.html
 ```

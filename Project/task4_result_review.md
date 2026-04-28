@@ -71,8 +71,11 @@ Report-ready static mesh figure:
 
 - `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task4\task4_report_mesh_scene_seed0_cropped.png`
 - `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task4\task4_report_mesh_scene_seed0_side_cropped.png`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task4\task4_side_mesh_with_task2_markers_cropped.png`
 
 This report figure intentionally removes the red/yellow target markers. It shows the physical ball size at the catch point, the UR10 mesh, the hoop, and faint trajectory samples.
+
+The side-view marker figure keeps the Task 2-style marker semantics: red marks the simple/Task 2 selected candidate and yellow marks the smart/Task 4 selected candidate. It belongs under Task 4 outputs because it compares Task 4 against the Task 2 baseline rather than documenting Task 2 alone.
 
 ## Completion Standard Check
 

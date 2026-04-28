@@ -24,7 +24,7 @@ from trajectory_predictor import LinearKalmanTrajectoryPredictor
 from utils.ball_simulation import BallSimulation
 
 
-def render_scene(seed: int, output_html: Path, camera_view: str):
+def render_scene(seed: int, output_html: Path, camera_view: str, show_target_markers: bool, simple_max_distance: float):
     prediction, observed, current_time = _make_prediction(seed)
     robot = load_project_robot(SOFTWARE_DIR)
     tcp_pose = build_tcp_pose_function(robot)
@@ -34,7 +34,7 @@ def render_scene(seed: int, output_html: Path, camera_view: str):
     workspace_center, _ = tcp_pose(q0)
     workspace_center = np.asarray(workspace_center, dtype=float).reshape(3)
 
-    simple_result = _select_simple(prediction, current_time, workspace_center)
+    simple_result = _select_simple(prediction, current_time, workspace_center, simple_max_distance)
     smart_result = _select_smart(robot, tcp_pose, limits, prediction, current_time, q0, dq0, workspace_center)
     controller = _controller_for_time(robot, tcp_pose, smart_result.time, current_time)
     plan = controller.plan(q0=q0, dq0=dq0, target_position=smart_result.position)
@@ -46,7 +46,7 @@ def render_scene(seed: int, output_html: Path, camera_view: str):
     viz.loadViewerModel(rootNodeName="task4_report_ur10")
     viz.displayFrames(False)
     viz.display(plan.q[-1])
-    _add_clean_scene(viz, prediction, observed, smart_result)
+    _add_clean_scene(viz, prediction, observed, simple_result, smart_result, show_target_markers)
     _set_report_camera(viz, camera_view)
 
     output_html.parent.mkdir(parents=True, exist_ok=True)
@@ -72,13 +72,13 @@ def _make_prediction(seed: int):
     return predictor.predict(horizon=0.8, dt=0.02), np.asarray(observed), predictor.time
 
 
-def _select_simple(prediction, current_time, workspace_center):
+def _select_simple(prediction, current_time, workspace_center, max_workspace_distance: float):
     selector = SimpleInterceptionSelector(
         current_time=current_time,
         min_lead_time=0.12,
         z_min=0.35,
         workspace_center=workspace_center,
-        max_workspace_distance=0.85,
+        max_workspace_distance=max_workspace_distance,
     )
     return selector.select(prediction)
 
@@ -119,10 +119,24 @@ def _controller_for_time(robot, tcp_pose, candidate_time, current_time):
     )
 
 
-def _add_clean_scene(viz, prediction, observed, smart_result):
+def _add_clean_scene(viz, prediction, observed, simple_result, smart_result, show_target_markers: bool):
     viewer = viz.viewer
     viewer["task4_report/caught_ball"].set_object(mg.Sphere(BallSimulation.ball_radius), mg.MeshPhongMaterial(color=0x4DAF4A))
     viewer["task4_report/caught_ball"].set_transform(translation_matrix(smart_result.position))
+    if show_target_markers:
+        marker_offset = np.array([0.0, -0.16, 0.0])
+        marker_radius = 0.05
+        if simple_result.success:
+            viewer["task4_report/simple_target_marker"].set_object(
+                mg.Sphere(marker_radius),
+                mg.MeshPhongMaterial(color=0xE41A1C, opacity=0.9),
+            )
+            viewer["task4_report/simple_target_marker"].set_transform(translation_matrix(simple_result.position + marker_offset))
+        viewer["task4_report/smart_target_marker"].set_object(
+            mg.Sphere(marker_radius),
+            mg.MeshPhongMaterial(color=0xFFD700, opacity=0.9),
+        )
+        viewer["task4_report/smart_target_marker"].set_transform(translation_matrix(smart_result.position + marker_offset))
 
     for i, pos in enumerate(prediction.positions[::4]):
         viewer[f"task4_report/predicted_path/{i:02d}"].set_object(mg.Sphere(0.018), mg.MeshPhongMaterial(color=0x77DD77, opacity=0.28))
@@ -149,11 +163,13 @@ def parse_args():
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--output-html", type=Path, default=Path("../outputs/task4/task4_report_mesh_scene_seed0.html"))
     parser.add_argument("--camera-view", choices=["three-quarter", "side", "front"], default="three-quarter")
+    parser.add_argument("--show-target-markers", action="store_true")
+    parser.add_argument("--simple-max-distance", type=float, default=0.85)
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_args()
-    result = render_scene(args.seed, args.output_html, args.camera_view)
+    result = render_scene(args.seed, args.output_html, args.camera_view, args.show_target_markers, args.simple_max_distance)
     for key, value in result.items():
         print(f"{key}: {value}")
