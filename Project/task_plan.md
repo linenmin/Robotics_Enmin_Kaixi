@@ -116,4 +116,4 @@ conda activate robotics
 
 ## Next Action
 
-Task 3 的多步 NLP 控制器已通过第一版高分路线验收。下一步进入 Task 4：基于优化可达性和时间/约束代价，升级接球点选择策略。
+Task 4 smarter interception selector 已实现并通过多 seed benchmark。下一步进入报告集成：把 Task 1-4 的方法、关键图表、表格和限制条件压缩进 8 页以内的英文报告草稿。

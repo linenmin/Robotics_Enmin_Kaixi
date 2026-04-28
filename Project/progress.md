@@ -341,3 +341,68 @@ Generated evidence:
 
 - `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task3\task3_layer1_metrics.json`
 - `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task3\task3_layer1_plan.png`
+
+### Git Checkpoint
+
+Committed and pushed current Project work:
+
+```text
+985ff5e feat(project): add robotics task planning and controllers
+```
+
+Branch:
+
+```text
+main -> origin/main
+```
+
+### Task 4 Entry
+
+Created:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\task4_decision_memo.md`
+
+Decision memo recommendation:
+
+- implement a two-stage smarter interception selector.
+- first run a cheap geometric prefilter over candidate trajectory points.
+- then run Task 3 NLP feasibility/cost scoring on a short list of candidates.
+- compare simple vs smart by terminal error, catch time, max acceleration, velocity ratio, and safety metrics.
+- upgrade validation from a single seed to a multi-seed benchmark, because the report needs evidence for success rate and not only one selected example.
+
+### Task 4 Implementation
+
+Created:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\smart_interception_selector.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\tests\test_smart_interception_selector.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\scripts\benchmark_task4_strategy.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\task4_result_review.md`
+
+Verification:
+
+```powershell
+conda run -n robotics python -m unittest tests.test_safety_metrics tests.test_optimal_control_planner tests.test_interception_selector tests.test_trajectory_predictor tests.test_smart_interception_selector
+conda run -n robotics python scripts\benchmark_task4_strategy.py
+```
+
+Results:
+
+- unit tests passed: 13 tests.
+- benchmark seeds: 0 through 9.
+- simple strategy success rate: `0.00`.
+- smart strategy success rate: `1.00`.
+- simple mean attempt terminal error: `0.257 m`.
+- smart mean terminal error: `0.00136 m`.
+- simple mean attempt catch time: `1.340 s`.
+- smart mean catch time: `1.428 s`.
+- smart mean max acceleration: `1.495 rad/s^2`.
+- smart mean velocity ratio: `0.329`.
+- smart constraint violations: `0`.
+
+Generated evidence:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task4\task4_benchmark.json`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task4\task4_simple_vs_smart.png`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task4\task4_candidate_scores.png`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task4\task4_smart_catch_seed0.gif`
