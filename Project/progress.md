@@ -550,3 +550,37 @@ Verification:
 - Final PDF has 7 pages total: title page, 5 body pages, references.
 - Rendered PDF pages inspected for text overflow and figure/table readability.
 - Banned wording and first-person scan returned no matches.
+
+### Final Review Fixes
+
+第五轮严格审查后的最终修复已完成：
+
+- 修复 Task 3 优化公式中缺失的三个 `+` 号。
+- 重新核对 URDF frame 映射：`hoop_ring.stl` 的薄轴在 `tool_link` 的 \(x\)-axis，`tcp_joint` 将该物理 hoop normal 映射到 `tcp` 的 \(z\)-axis。
+- 将 benchmark 中的 hoop-plane crossing normal 和 terminal normal-alignment objective 从 `tcp x` 修正为 `tcp z`，与 top-side path constraint \(R_{zz}\ge0\) 统一。
+- 重跑 50-seed benchmark：time-first feasible success rate 从 96% 提升到 98%，失败 seed 从 11/41 变为仅 seed 11。
+- 删除报告表格中的 covariance guard 冗余行，将其改为 Task 1 中的 covariance diagnostic。
+- 补充 Task 4 中 time-first vs late/balanced 的 tradeoff 解释，以及 model-execution gap 数字的一致性解释。
+- 更新 failure analysis：seed 11 best radial error 为 `51.5 mm`，16-candidate / 1.35 m workspace mitigation 仍未恢复。
+
+Updated:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\optimal_control_planner.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\scripts\benchmark_high_score_strategies.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\scripts\render_evidence_figures.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\scripts\render_high_score_figures.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\tests\test_optimal_control_planner.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\report_template\template.tex`
+
+Generated:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\report_template\final_report_research_grade_v4.pdf`
+- refreshed high-score benchmark and figure outputs under `Project\outputs\high_score`
+
+Verification:
+
+- `conda run -n robotics python -m unittest discover -s tests` passed: 20 tests.
+- Tectonic compilation succeeded.
+- Final PDF has 7 pages total: title page, 5 body pages, references.
+- Rendered pages inspected for formula readability, Task 4 table, Pareto figure, and failure figure.
+- Banned wording and first-person scan returned no matches.

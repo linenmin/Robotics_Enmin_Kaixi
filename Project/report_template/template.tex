@@ -63,7 +63,7 @@ Ball and hoop radii & \(0.12,\,0.15\,\mathrm{m}\) & \(r_h-r_b=30\,\mathrm{mm}\) 
 Measurement noise & \(1\,\mathrm{mm}\) Gaussian position noise & \(R=\sigma^2 I_3\) in the Kalman update \\
 Robot base & Fixed & Removes mobile-base planning from the report \\
 Acceleration limit & \(2\,\mathrm{rad/s^2}\) & \(|\ddot q_{k,j}|\le2\) for every knot and joint \\
-Hoop orientation & Top side never faces ground & \(R_{zz}(q_k)\ge0\) for all \(k\) \\
+Hoop orientation & Top side never faces ground & TCP \(z\)-axis satisfies \(R_{zz}(q_k)\ge0\) \\
 Collision evidence & Table clearance and self-sphere proxy & Conservative check, not exact mesh collision \\
 \bottomrule
 \end{tabular}
@@ -88,9 +88,9 @@ The filter initializes from the first noisy position measurement with zero veloc
     \label{fig:task1}
 \end{figure}
 
-A noise sweep supports the same conclusion. When measurement noise increases from 1 to 10 mm, mean 0.5 s prediction RMSE increases from \(3.67\) to \(10.34\,\mathrm{mm}\), and the maximum observed RMSE remains \(20.01\,\mathrm{mm}\). A downstream Task 4 sweep over 20 seeds keeps time-first success at 95\% for 1, 3, and 5 mm noise, and at 90\% for 10 mm. The estimator is therefore not the main bottleneck under the stated 1 mm setting.
+A noise sweep supports the same conclusion. When measurement noise increases from 1 to 10 mm, mean 0.5 s prediction RMSE increases from \(3.67\) to \(10.34\,\mathrm{mm}\), and the maximum observed RMSE remains \(20.01\,\mathrm{mm}\). A downstream Task 4 sweep over 20 seeds keeps time-first success at 95\% for 1, 3, 5, and 10 mm noise. The estimator is therefore not the main bottleneck under the stated 1 mm setting.
 
-The covariance output does not materially change selection in this benchmark. It grows monotonically over the 0.8 s prediction window, from about \(100\) to \(178\,\mathrm{mm}\) in \(\sqrt{\mathrm{tr}(P)}\), so it mostly duplicates catch-time preference rather than detecting the two failure seeds. The final selector keeps the covariance as a diagnostic for future closed-loop variants, but it does not rely on a tuned covariance threshold.
+The covariance output does not materially change selection in this benchmark. The predicted position covariance \(\sqrt{\mathrm{tr}(P_{pp})}\) grows monotonically over the 0.8 s prediction window, from about \(100\) to \(178\,\mathrm{mm}\), so it mostly duplicates catch-time preference rather than detecting the failure seed. A candidate-rejection ablation gave the same selected catches as time-first feasible across all 50 seeds. The final selector keeps covariance as a diagnostic for future closed-loop variants, but it does not rely on a tuned covariance threshold.
 
 \subsection*{Geometric Candidate Selection Baselines (addresses Task 2)}
 
@@ -102,7 +102,7 @@ A second baseline removes prediction completely. It uses a damped Jacobian pseud
 \[
 \dot q = J(q)^\top\left(J(q)J(q)^\top+\lambda^2I\right)^{-1}K(p_{\mathrm{ball,meas}}-p_{\mathrm{tcp}}),
 \]
-with velocity and acceleration saturation. This reactive controller also gives 0\% success. Its closest TCP-to-ball distance was \(0.176\pm0.058\,\mathrm{m}\), and even the best seed stayed \(59.4\,\mathrm{mm}\) away. Prediction is therefore necessary, and a prediction-only geometric catch point remains insufficient.
+with velocity and acceleration saturation. This reactive controller also gives 0\% success. Its closest TCP-to-ball distance was \(0.176\pm0.058\,\mathrm{m}\), and even the best seed stayed \(59.4\,\mathrm{mm}\) away. The controller captures only the geometric closest-approach point of the flight path; it cannot accelerate the hoop fast enough to create a time-aligned catch. Prediction is therefore necessary, and a prediction-only geometric catch point remains insufficient.
 
 \begin{figure}[H]
     \centering
@@ -127,10 +127,10 @@ The optimization problem is
 \begin{aligned}
 \min_{q,\dot q,\ddot q}\;&
 w_p\|p_{\mathrm{tcp}}(q_N)-p^\star\|_2^2
-\sum_{k=0}^{N-1} w_u\|\ddot q_k\|_2^2
-\sum_{k=1}^{N} w_v\|\dot q_k\|_2^2\\
++\sum_{k=0}^{N-1} w_u\|\ddot q_k\|_2^2
++\sum_{k=1}^{N} w_v\|\dot q_k\|_2^2\\
 &+w_o(1-R_{zz}(q_N))^2
-w_n\bigl(1-(n_{\mathrm{hoop}}(q_N)^\top\hat v_{\mathrm{ball}})^2\bigr)\\
++w_n\bigl(1-(n_{\mathrm{hoop}}(q_N)^\top\hat v_{\mathrm{ball}})^2\bigr)\\
 \mathrm{s.t.}\;& q_0=q_{\mathrm{init}},\quad \dot q_0=\dot q_{\mathrm{init}},\\
 & q_{\min}\le q_k\le q_{\max},\quad
 -\dot q_{\max}\le \dot q_k\le \dot q_{\max},\quad
@@ -139,7 +139,7 @@ w_n\bigl(1-(n_{\mathrm{hoop}}(q_N)^\top\hat v_{\mathrm{ball}})^2\bigr)\\
 R_{zz}(q_k)\ge0,\qquad \forall k .
 \end{aligned}
 \]
-The validation uses \(N=28\), \(\Delta t=0.05\,\mathrm{s}\), \(w_p=1500\), \(w_u=2\times10^{-2}\), \(w_v=10^{-3}\), \(w_o=10\), and \(w_n=5\). The mesh is thin along the local \(x\)-axis, so the implementation uses local \(x\) as the hoop normal. The local \(z\)-axis defines the top-side constraint. Pinocchio supplies URDF forward kinematics. CasADi builds the symbolic NLP, and IPOPT solves it.
+The validation uses \(N=28\), \(\Delta t=0.05\,\mathrm{s}\), \(w_p=1500\), \(w_u=2\times10^{-2}\), \(w_v=10^{-3}\), \(w_o=10\), and \(w_n=5\). The hoop mesh is thin along the \(x\)-axis of \texttt{tool\_link}. The fixed TCP joint rotates this physical hoop normal into the local \(z\)-axis of the \texttt{tcp} frame. The implementation therefore uses TCP \(z\) as \(n_{\mathrm{hoop}}\), and the same TCP \(z\)-axis defines the top-side path constraint \(R_{zz}(q_k)\ge0\). Pinocchio supplies URDF forward kinematics. CasADi builds the symbolic NLP, and IPOPT solves it.
 
 \begin{figure}[H]
     \centering
@@ -161,7 +161,7 @@ For the Task 2 target, the NLP reduced the hoop-target distance from \(0.731\,\m
 
 Task 4 asks for higher success rate and shorter interception time. The result depends on the comparison domain. The simple geometric rule attempts an earlier catch, but it has 0\% success, so its attempted time is not a successful-interception baseline. The fair time comparison uses successful feasible policies evaluated on the same candidate pool.
 
-The selector forms a shared candidate pool from the predicted trajectory, solves the Task 3 NLP for each shortlisted candidate, and accepts only candidates that pass three checks: NLP convergence, hoop-plane crossing by the true ball trajectory, and zero safety penalty. All 396 evaluated candidate NLPs converged, but only 173 candidates passed the hoop-crossing test. This split identifies the bottleneck: the robot can solve the motion plans, but many geometrically plausible catch points do not place the hoop in a crossing-compatible pose.
+The selector forms a shared candidate pool from the predicted trajectory, solves the Task 3 NLP for each shortlisted candidate, and accepts only candidates that pass three checks: NLP convergence, hoop-plane crossing by the true ball trajectory, and zero safety penalty. All 396 evaluated candidate NLPs converged, but only 164 candidates passed the hoop-crossing test. This split identifies the bottleneck: the robot can solve the motion plans, but many geometrically plausible catch points do not place the hoop in a crossing-compatible pose.
 
 \begin{figure}[H]
     \centering
@@ -187,34 +187,35 @@ Strategy & Success & Time [s] & TCP [mm] & Radial [mm] & Max \(\ddot q\) & IPOPT
 \midrule
 Reactive no prediction & 0\% & -- & -- & -- & -- & -- \\
 Simple geometric & 0\% & 1.295* & -- & -- & -- & -- \\
-Late feasible & 96\% & \(1.433\pm0.010\) & 2.24 & 10.09 & 1.95 & 13.8 it. \\
-Time-first feasible & 96\% & \(1.381\pm0.022\) & 20.39 & 12.75 & 2.00 & 13.9 it. \\
-Covariance guard & 96\% & \(1.381\pm0.022\) & 20.39 & 12.75 & 2.00 & 13.9 it. \\
-Balanced cost & 96\% & \(1.421\pm0.026\) & 2.02 & 9.60 & 1.93 & 13.8 it. \\
+Late feasible & 98\% & \(1.433\pm0.009\) & 1.87 & 5.75 & 1.65 & 10.4 it. \\
+Time-first feasible & 98\% & \(1.387\pm0.018\) & 13.18 & 11.24 & 2.00 & 13.5 it. \\
+Balanced cost & 98\% & \(1.433\pm0.010\) & 1.86 & 5.76 & 1.65 & 10.4 it. \\
 \bottomrule
 \end{tabular}
 \end{table}
 \vspace{-2mm}
 {\footnotesize *Attempted catch time, not successful interception time.}
 
-The time-first feasible policy gives the strongest answer to the Task 4 wording. It raises full-system success from 0\% to 96\% and catches \(0.052\,\mathrm{s}\) earlier than late feasible. This is about one control tick. Balanced cost keeps the same success rate and reduces mean radial error from \(12.75\) to \(9.60\,\mathrm{mm}\), but it catches \(0.040\,\mathrm{s}\) later than time-first. The covariance guard gives the same result as time-first because the propagated covariance changes mainly with horizon length, not with the lateral failure mechanism.
+The time-first feasible policy gives the strongest answer to the Task 4 wording. It raises full-system success from 0\% to 98\% and catches \(0.047\,\mathrm{s}\) earlier than late feasible. This is about one control tick. Late feasible and balanced cost dominate time-first on TCP error, radial error, and control effort, but they spend that extra tick. The submitted Task 4 answer is time-first because the wording explicitly asks for shorter interception time. If the objective weighted hoop-crossing accuracy more heavily, late feasible or balanced cost would be the right engineering choice. Figure~\ref{fig:pareto} makes this trade visible.
 
-The open-loop model-execution gap remains small. For successful time-first catches, the NLP terminal error to the predicted target averaged \(20.39\,\mathrm{mm}\), the predicted hoop-crossing radial error averaged \(10.91\,\mathrm{mm}\), and the true-ball radial error averaged \(12.75\,\mathrm{mm}\). The mean predicted-to-true radial gap was \(4.08\,\mathrm{mm}\). This separates solver quality from execution quality without hiding the open-loop assumption.
+Time-first selects the earliest feasible candidate, so it runs with the tightest motion budget. The NLP saturates the acceleration bound and has less freedom to refine pose. Balanced and late-feasible candidates occur later, where the NLP has slack to align the hoop normal with the ball direction. This explains the lower TCP and radial errors in those rows. Their TCP error is below \(3\,\mathrm{mm}\), while radial error remains near \(6\,\mathrm{mm}\), because the true ball crosses the hoop plane slightly away from the predicted target after measurement-noise-driven prediction error and candidate-time discretization.
+
+The open-loop model-execution gap remains small. For successful time-first catches, the NLP terminal error to the predicted target averaged \(13.18\,\mathrm{mm}\), the predicted hoop-crossing radial error averaged \(9.36\,\mathrm{mm}\), and the true-ball radial error averaged \(11.24\,\mathrm{mm}\). The difference of means is \(1.87\,\mathrm{mm}\), while the per-seed mean absolute predicted-to-true radial gap is \(4.41\,\mathrm{mm}\). This separates solver quality from execution quality without hiding the open-loop assumption.
 
 \subsection*{Failure Analysis, Course Connection, and Reproducibility}
 
-The two time-first failures are seeds 11 and 41. Both have high positive lateral velocity \(v_y\), close to the 95th percentile of the 50-seed distribution. Seed 41 almost succeeds, with best radial error \(33.4\,\mathrm{mm}\), while seed 11 stays far outside tolerance at \(145.2\,\mathrm{mm}\). A mitigation run with 16 candidates and a \(1.35\,\mathrm{m}\) workspace radius recovered neither seed. The remaining failures are therefore not estimator divergence or NLP non-convergence; they are lateral-trajectory geometry cases near the edge of the evaluated catch set.
+The only time-first failure is seed 11. It has high positive lateral velocity \(v_y\), close to the 95th percentile of the 50-seed distribution. The best candidate still has \(51.5\,\mathrm{mm}\) radial error, outside the \(30\,\mathrm{mm}\) tolerance. A mitigation run with 16 candidates and a \(1.35\,\mathrm{m}\) workspace radius did not recover this seed. The remaining failure is therefore not estimator divergence or NLP non-convergence; it is a lateral-trajectory geometry case near the edge of the evaluated catch set. Recovering it would require a longer prediction horizon or a different candidate sampler.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.58\linewidth]{../outputs/high_score/figure_failure_velocity_diagnostics.png}
-    \caption{Failure mechanism for seeds 11 and 41. Both failures sit at the high-lateral-velocity edge of the seed distribution, which pushes the hoop crossing outside the \(30\,\mathrm{mm}\) tolerance.}
+    \caption{Failure mechanism for seed 11. The failed seed sits at the high-lateral-velocity edge of the distribution, which pushes the hoop crossing outside the \(30\,\mathrm{mm}\) tolerance.}
     \label{fig:failure}
 \end{figure}
 
 The method maps directly to the course material. The hard inequalities follow constraint-based robot programming from C4. The finite horizon over \(q\), \(\dot q\), and \(\ddot q\) is a direct-transcription optimal control problem from C5. The objective is a soft multi-objective formulation rather than a strict stack of tasks from C3. A hard hierarchical stack was not used because joint limits, acceleration limits, hoop orientation, and table clearance have equal physical priority once they become hard constraints. A single-step resolved acceleration controller can track a Cartesian target, but it cannot enforce the path constraints over the full prediction window. A minimum-jerk trajectory handles smoothness, but it does not handle the hoop crossing and joint-limit constraints by itself.
 
-The experiments ran with Python 3.13.13, NumPy 2.4.3, CasADi 3.6.7, Pinocchio 3.4.0, and IPOPT through CasADi. The main benchmark uses seeds 0--49. The noise sweep uses seeds 0--49 for prediction error and seeds 0--19 for downstream success. The main reproduction commands are:
+The experiments ran with Python 3.13.13, NumPy 2.4.3, CasADi 3.6.7, Pinocchio 3.4.0, and IPOPT through CasADi. The main benchmark uses seeds 0--49. The noise sweep uses seeds 0--49 for prediction error and seeds 0--19 for downstream success. The submitted repository state is recorded by the git commit used for upload. The main reproduction commands are:
 \[
 \texttt{python scripts/benchmark\_high\_score\_strategies.py}
 \quad\text{and}\quad
@@ -223,7 +224,7 @@ The experiments ran with Python 3.13.13, NumPy 2.4.3, CasADi 3.6.7, Pinocchio 3.
 
 \subsection*{Conclusion}
 
-The final system supports the thesis. Prediction is necessary, because the reactive controller never reaches the ball within the tolerance. Prediction alone is insufficient, because the simple geometric selector also gives 0\% success. The decisive step is feasibility-aware candidate selection: it keeps the estimator and controller fixed, filters candidates through the UR10 NLP and the true hoop-crossing geometry, and raises success to 96\%. Time-first feasible gives the shortest successful catch among the evaluated policies, while balanced cost shows the price of buying a few millimetres of radial accuracy.
+The final system supports the thesis. Prediction is necessary, because the reactive controller never reaches the ball within the tolerance. Prediction alone is insufficient, because the simple geometric selector also gives 0\% success. The decisive step is feasibility-aware candidate selection: it keeps the estimator and controller fixed, filters candidates through the UR10 NLP and the true hoop-crossing geometry, and raises success to 98\%. Time-first feasible gives the shortest successful catch among the evaluated policies, while balanced cost shows the price of buying a few millimetres of radial accuracy.
 
 \clearpage
 \section*{References}

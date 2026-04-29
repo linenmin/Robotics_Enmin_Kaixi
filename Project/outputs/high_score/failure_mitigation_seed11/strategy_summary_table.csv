@@ -1,0 +1,6 @@
+strategy,n,success_count,success_rate,mean_attempt_catch_time_s,std_attempt_catch_time_s,mean_success_catch_time_s,std_success_catch_time_s,mean_success_terminal_error_m,std_success_terminal_error_m,mean_success_radial_error_m,std_success_radial_error_m,mean_success_max_abs_ddq,mean_success_max_velocity_ratio,mean_success_solve_time_s,mean_success_iter_count,mean_success_terminal_normal_alignment,min_success_tcp_table_clearance_m,min_success_frame_table_clearance_m,min_success_self_sphere_clearance_m,failure_count
+earliest_nlp_feasible,1,0,0.0,1.4400000000000004,0.0,,,,,,,,,,,,,,,1
+latest_nlp_feasible,1,0,0.0,1.4400000000000004,0.0,,,,,,,,,,,,,,,1
+simple_geometric,1,0,0.0,1.2800000000000005,0.0,,,,,,,,,,,,,,,1
+smart_cost,1,0,0.0,1.4400000000000004,0.0,,,,,,,,,,,,,,,1
+uncertainty_guard_feasible,1,0,0.0,1.4400000000000004,0.0,,,,,,,,,,,,,,,1

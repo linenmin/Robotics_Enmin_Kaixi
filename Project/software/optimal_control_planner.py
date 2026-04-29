@@ -8,6 +8,10 @@ import pinocchio as pin
 from pinocchio import casadi as cpin
 
 
+def hoop_normal_from_tcp_rotation(rotation):
+    return rotation[:, 2]
+
+
 @dataclass(frozen=True)
 class JointLimits:
     lower: np.ndarray
@@ -139,7 +143,7 @@ class MultiStepNLPController:
         objective += self.terminal_weight * ca.sumsqr(terminal_error_expr)
         objective += self.orientation_weight * (1.0 - terminal_rotation[2, 2]) ** 2
         if normalized_target_normal is not None and normal_alignment_weight > 0.0:
-            terminal_normal = terminal_rotation[:, 0]
+            terminal_normal = hoop_normal_from_tcp_rotation(terminal_rotation)
             alignment = ca.dot(terminal_normal, normalized_target_normal)
             objective += float(normal_alignment_weight) * (1.0 - alignment**2)
         for k in range(horizon + 1):
@@ -191,7 +195,7 @@ class MultiStepNLPController:
         tcp_positions = self._evaluate_tcp_positions(q_plan)
         terminal_error = float(np.linalg.norm(tcp_positions[-1] - target_position))
         _, terminal_rotation_value = self.tcp_pose_function(q_plan[-1])
-        terminal_normal_value = np.asarray(terminal_rotation_value, dtype=float)[:, 0]
+        terminal_normal_value = hoop_normal_from_tcp_rotation(np.asarray(terminal_rotation_value, dtype=float))
         if normalized_target_normal is None:
             terminal_normal_alignment = float("nan")
         else:

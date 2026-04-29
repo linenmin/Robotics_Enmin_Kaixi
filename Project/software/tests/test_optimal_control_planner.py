@@ -7,6 +7,7 @@ from optimal_control_planner import (
     JointLimits,
     MultiStepNLPController,
     build_tcp_pose_function,
+    hoop_normal_from_tcp_rotation,
     load_project_robot,
 )
 
@@ -66,6 +67,13 @@ class MultiStepNLPControllerTest(unittest.TestCase):
 
         self.assertTrue(result.success, result.status)
         self.assertTrue(np.isfinite(result.terminal_normal_alignment))
+
+    def test_hoop_normal_uses_tcp_top_axis(self):
+        q0 = np.array([0.0, -1.9, 1.9, -1.6, -1.6, 0.0])
+        _, rotation = self.tcp_pose(q0)
+        rotation = np.asarray(rotation, dtype=float)
+
+        np.testing.assert_allclose(hoop_normal_from_tcp_rotation(rotation), rotation[:, 2])
 
     def test_planned_trajectory_respects_joint_limits(self):
         q0 = np.array([0.0, -1.9, 1.9, -1.6, -1.6, 0.0])

@@ -136,7 +136,7 @@ def run_failure_mitigation(benchmark: dict):
         )
     return {
         "failed_seeds": failed_seeds,
-        "mitigation_test": "max_candidates=16 and max_candidate_distance=1.35 m for seeds 11 and 41; success_count=0/2",
+        "mitigation_test": f"max_candidates=16 and max_candidate_distance=1.35 m for failed seeds {failed_seeds}; success_count=0/{len(failed_seeds)}",
         "rows": rows,
     }
 

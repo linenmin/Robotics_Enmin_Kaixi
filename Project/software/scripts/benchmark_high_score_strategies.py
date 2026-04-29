@@ -17,6 +17,7 @@ from optimal_control_planner import (
     MultiStepNLPController,
     build_tcp_pose_function,
     evaluate_plan_safety,
+    hoop_normal_from_tcp_rotation,
     load_project_robot,
 )
 from strategy_benchmark import (
@@ -195,7 +196,7 @@ def _evaluate_common_candidate_pool(
         hoop_center, hoop_rotation = tcp_pose(plan.q[-1])
         hoop_center = np.asarray(hoop_center, dtype=float).reshape(3)
         hoop_rotation = np.asarray(hoop_rotation, dtype=float)
-        hoop_normal = hoop_rotation[:, 0]
+        hoop_normal = hoop_normal_from_tcp_rotation(hoop_rotation)
         predicted_crossing = evaluate_hoop_crossing(
             times=prediction.times,
             ball_positions=prediction.positions,

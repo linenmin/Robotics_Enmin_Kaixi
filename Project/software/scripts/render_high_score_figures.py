@@ -35,9 +35,9 @@ def render_figures(benchmark_path: Path, task2_plot: Path, mesh_side_plot: Path,
 
 def _render_strategy_benchmark(benchmark: dict, output_path: Path):
     rows = benchmark["strategy_rows"]
-    strategies = ["simple_geometric", "latest_nlp_feasible", "earliest_nlp_feasible", "uncertainty_guard_feasible", "smart_cost"]
-    labels = ["simple", "late\nfeasible", "time-first\nfeasible", "uncertainty\nguard", "balanced\ncost"]
-    colors = ["#9aa0a6", "#CC79A7", "#0072B2", "#009E73", "#E69F00"]
+    strategies = ["simple_geometric", "latest_nlp_feasible", "earliest_nlp_feasible", "smart_cost"]
+    labels = ["simple", "late\nfeasible", "time-first\nfeasible", "balanced\ncost"]
+    colors = ["#9aa0a6", "#CC79A7", "#0072B2", "#E69F00"]
     summary = benchmark["summary"]
 
     fig, axes = plt.subplots(2, 2, figsize=(10.5, 7.2), constrained_layout=True)
@@ -214,7 +214,6 @@ def _render_candidate_pareto(benchmark: dict, output_path: Path):
     named = {
         "latest_nlp_feasible": ("late feasible", "#CC79A7", "s"),
         "earliest_nlp_feasible": ("time-first feasible", "#0072B2", "^"),
-        "uncertainty_guard_feasible": ("uncertainty guard", "#009E73", "D"),
         "smart_cost": ("balanced cost", "#E69F00", "o"),
     }
     for strategy, (label, color, marker) in named.items():
@@ -270,7 +269,7 @@ def _render_failure_velocity_diagnostics(benchmark: dict, output_path: Path):
     ax.axhline(np.percentile(lateral_speed, 95), color="#D55E00", linestyle="--", linewidth=1.1, label="95th pct lateral speed")
     ax.set_xlabel("initial horizontal ball speed [m/s]")
     ax.set_ylabel("initial lateral velocity $v_y$ [m/s]")
-    ax.set_title("Failure seeds are lateral-trajectory outliers")
+    ax.set_title("Failure seed is a lateral-trajectory outlier")
     ax.grid(alpha=0.25)
     ax.legend(fontsize=8.5, frameon=False)
     fig.savefig(output_path, dpi=240)
