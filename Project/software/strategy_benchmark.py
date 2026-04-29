@@ -166,7 +166,7 @@ def summarize_strategy_rows(rows: list[dict]) -> dict:
 
 def _smart_cost(candidate: CandidateEvaluation) -> float:
     return (
-        0.20 * candidate.time
+        15.0 * candidate.time
         + 100.0 * candidate.terminal_error
         + 0.20 * candidate.max_abs_ddq
         + 0.20 * candidate.max_velocity_ratio

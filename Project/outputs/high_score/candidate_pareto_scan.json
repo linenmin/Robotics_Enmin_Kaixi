@@ -1,92 +1,86 @@
 [
   {
     "time_weight": 0.0,
-    "mean_time_s": 1.422857142857143,
-    "mean_radial_error_m": 0.005395515368083709,
+    "mean_time_s": 1.4330612244897962,
+    "mean_radial_error_m": 0.0057593400095521455,
     "success_rate": 0.98
   },
   {
-    "time_weight": 0.09999999999999999,
-    "mean_time_s": 1.422857142857143,
-    "mean_radial_error_m": 0.005395515368083709,
+    "time_weight": 1.0,
+    "mean_time_s": 1.4330612244897962,
+    "mean_radial_error_m": 0.0057593400095521455,
     "success_rate": 0.98
   },
   {
-    "time_weight": 0.19999999999999998,
-    "mean_time_s": 1.422857142857143,
-    "mean_radial_error_m": 0.005395515368083709,
+    "time_weight": 2.0,
+    "mean_time_s": 1.43265306122449,
+    "mean_radial_error_m": 0.005766967225114058,
     "success_rate": 0.98
   },
   {
-    "time_weight": 0.3,
-    "mean_time_s": 1.422857142857143,
-    "mean_radial_error_m": 0.005395515368083709,
+    "time_weight": 3.0,
+    "mean_time_s": 1.4302040816326533,
+    "mean_radial_error_m": 0.005772687509907656,
     "success_rate": 0.98
   },
   {
-    "time_weight": 0.39999999999999997,
-    "mean_time_s": 1.422857142857143,
-    "mean_radial_error_m": 0.005395515368083709,
+    "time_weight": 5.0,
+    "mean_time_s": 1.4269387755102043,
+    "mean_radial_error_m": 0.005755924983134501,
     "success_rate": 0.98
   },
   {
-    "time_weight": 0.49999999999999994,
-    "mean_time_s": 1.422040816326531,
-    "mean_radial_error_m": 0.005393163177172215,
+    "time_weight": 7.5,
+    "mean_time_s": 1.4236734693877555,
+    "mean_radial_error_m": 0.00577364374941211,
     "success_rate": 0.98
   },
   {
-    "time_weight": 0.6,
-    "mean_time_s": 1.422040816326531,
-    "mean_radial_error_m": 0.005393163177172215,
+    "time_weight": 10.0,
+    "mean_time_s": 1.4179591836734697,
+    "mean_radial_error_m": 0.005805803563744756,
     "success_rate": 0.98
   },
   {
-    "time_weight": 0.7,
-    "mean_time_s": 1.422040816326531,
-    "mean_radial_error_m": 0.005393163177172215,
+    "time_weight": 15.0,
+    "mean_time_s": 1.4114285714285717,
+    "mean_radial_error_m": 0.005912323330095473,
     "success_rate": 0.98
   },
   {
-    "time_weight": 0.7999999999999999,
-    "mean_time_s": 1.4212244897959188,
-    "mean_radial_error_m": 0.005398721393873335,
+    "time_weight": 20.0,
+    "mean_time_s": 1.4032653061224492,
+    "mean_radial_error_m": 0.006146976370927285,
     "success_rate": 0.98
   },
   {
-    "time_weight": 0.8999999999999999,
-    "mean_time_s": 1.4212244897959188,
-    "mean_radial_error_m": 0.005398721393873335,
+    "time_weight": 30.0,
+    "mean_time_s": 1.3995918367346944,
+    "mean_radial_error_m": 0.0063751859793847515,
     "success_rate": 0.98
   },
   {
-    "time_weight": 0.9999999999999999,
-    "mean_time_s": 1.4212244897959188,
-    "mean_radial_error_m": 0.005398721393873335,
+    "time_weight": 50.0,
+    "mean_time_s": 1.3946938775510211,
+    "mean_radial_error_m": 0.007396925267842566,
     "success_rate": 0.98
   },
   {
-    "time_weight": 1.0999999999999999,
-    "mean_time_s": 1.4212244897959188,
-    "mean_radial_error_m": 0.005398721393873335,
+    "time_weight": 75.0,
+    "mean_time_s": 1.3902040816326537,
+    "mean_radial_error_m": 0.008532864108441264,
     "success_rate": 0.98
   },
   {
-    "time_weight": 1.2,
-    "mean_time_s": 1.4212244897959188,
-    "mean_radial_error_m": 0.005398721393873335,
+    "time_weight": 100.0,
+    "mean_time_s": 1.387755102040817,
+    "mean_radial_error_m": 0.010296611160030143,
     "success_rate": 0.98
   },
   {
-    "time_weight": 1.2999999999999998,
-    "mean_time_s": 1.4212244897959188,
-    "mean_radial_error_m": 0.005398721393873335,
-    "success_rate": 0.98
-  },
-  {
-    "time_weight": 1.4,
-    "mean_time_s": 1.4195918367346942,
-    "mean_radial_error_m": 0.005407738186559059,
+    "time_weight": 150.0,
+    "mean_time_s": 1.3865306122448986,
+    "mean_radial_error_m": 0.011235287217899393,
     "success_rate": 0.98
   }
 ]

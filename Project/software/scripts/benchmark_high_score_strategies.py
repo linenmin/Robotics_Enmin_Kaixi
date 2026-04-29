@@ -40,6 +40,8 @@ def run_benchmark(
     max_candidates: int,
     success_tolerance: float,
     measurement_noise_std: float = 1e-3,
+    orientation_weight: float = 10.0,
+    normal_alignment_weight: float = 5.0,
 ):
     robot = load_project_robot(SOFTWARE_DIR)
     tcp_pose = build_tcp_pose_function(robot)
@@ -67,6 +69,8 @@ def run_benchmark(
             max_candidate_distance=max_candidate_distance,
             max_candidates=max_candidates,
             success_tolerance=success_tolerance,
+            orientation_weight=orientation_weight,
+            normal_alignment_weight=normal_alignment_weight,
         )
         candidate_rows.extend(_candidate_to_row(candidate) for candidate in candidates)
         strategy_rows.extend(
@@ -88,6 +92,8 @@ def run_benchmark(
             "max_candidates": max_candidates,
             "success_tolerance_m": success_tolerance,
             "measurement_noise_std_m": measurement_noise_std,
+            "orientation_weight": orientation_weight,
+            "normal_alignment_weight": normal_alignment_weight,
             "candidate_pool": "same future/height/workspace-filtered candidate list for every strategy",
             "success_definition": "NLP success, hoop-plane crossing inside hoop_radius - ball_radius, and zero safety penalty.",
         },
@@ -135,7 +141,7 @@ def _true_future_from_simulation(simulation: BallSimulation, times: np.ndarray, 
     return TrajectoryPrediction(times=times.copy(), positions=np.asarray(future_positions))
 
 
-def _controller_for_time(robot, tcp_pose, candidate_time: float, current_time: float):
+def _controller_for_time(robot, tcp_pose, candidate_time: float, current_time: float, orientation_weight: float = 10.0):
     nlp_dt = 0.05
     available_time = max(0.25, candidate_time - current_time)
     horizon_steps = int(np.clip(np.ceil(available_time / nlp_dt), 16, 30))
@@ -147,6 +153,7 @@ def _controller_for_time(robot, tcp_pose, candidate_time: float, current_time: f
         terminal_weight=1_500.0,
         control_weight=2e-2,
         velocity_weight=1e-3,
+        orientation_weight=orientation_weight,
     )
 
 
@@ -164,6 +171,8 @@ def _evaluate_common_candidate_pool(
     max_candidate_distance: float,
     max_candidates: int,
     success_tolerance: float,
+    orientation_weight: float,
+    normal_alignment_weight: float,
 ):
     geometric_selector = SimpleInterceptionSelector(
         current_time=current_time,
@@ -181,14 +190,14 @@ def _evaluate_common_candidate_pool(
 
     candidates = []
     for index, time, position, status in accepted:
-        controller = _controller_for_time(robot, tcp_pose, time, current_time)
+        controller = _controller_for_time(robot, tcp_pose, time, current_time, orientation_weight=orientation_weight)
         target_normal = _trajectory_direction(prediction.positions, index)
         plan = controller.plan(
             q0=q0,
             dq0=dq0,
             target_position=position,
             target_normal=target_normal,
-            normal_alignment_weight=5.0,
+            normal_alignment_weight=normal_alignment_weight,
         )
         safety_metrics = evaluate_plan_safety(robot, tcp_pose, plan.q)
         safety_penalty = _safety_penalty(safety_metrics)
@@ -347,6 +356,8 @@ def parse_args():
     parser.add_argument("--max-candidates", type=int, default=8)
     parser.add_argument("--success-tolerance", type=float, default=0.03)
     parser.add_argument("--measurement-noise-std", type=float, default=1e-3)
+    parser.add_argument("--orientation-weight", type=float, default=10.0)
+    parser.add_argument("--normal-alignment-weight", type=float, default=5.0)
     return parser.parse_args()
 
 
@@ -359,6 +370,8 @@ if __name__ == "__main__":
         max_candidates=args.max_candidates,
         success_tolerance=args.success_tolerance,
         measurement_noise_std=args.measurement_noise_std,
+        orientation_weight=args.orientation_weight,
+        normal_alignment_weight=args.normal_alignment_weight,
     )
     print(json.dumps(result["summary"], indent=2))
     print(f"metrics: {metrics_file}")

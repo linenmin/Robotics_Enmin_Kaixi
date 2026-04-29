@@ -42,7 +42,8 @@ class StrategyBenchmarkTest(unittest.TestCase):
         candidates = [
             candidate(0, 1.00, False, 0.20),
             candidate(1, 1.20, True, 0.020, max_abs_ddq=1.9),
-            candidate(2, 1.40, True, 0.005, max_abs_ddq=0.5),
+            candidate(2, 1.30, True, 0.007, max_abs_ddq=0.8),
+            candidate(3, 1.40, True, 0.005, max_abs_ddq=0.5),
         ]
 
         simple = select_simple_geometric(candidates)
@@ -54,14 +55,14 @@ class StrategyBenchmarkTest(unittest.TestCase):
         self.assertFalse(simple.success)
         self.assertEqual(earliest.selected_index, 1)
         self.assertTrue(earliest.success)
-        self.assertEqual(latest.selected_index, 2)
+        self.assertEqual(latest.selected_index, 3)
         self.assertTrue(latest.success)
         self.assertEqual(smart.selected_index, 2)
         self.assertTrue(smart.success)
-        self.assertEqual(simple.candidate_pool_size, 3)
-        self.assertEqual(earliest.candidate_pool_size, 3)
-        self.assertEqual(latest.candidate_pool_size, 3)
-        self.assertEqual(smart.candidate_pool_size, 3)
+        self.assertEqual(simple.candidate_pool_size, 4)
+        self.assertEqual(earliest.candidate_pool_size, 4)
+        self.assertEqual(latest.candidate_pool_size, 4)
+        self.assertEqual(smart.candidate_pool_size, 4)
 
     def test_summary_reports_success_rate_and_time_statistics(self):
         rows = [

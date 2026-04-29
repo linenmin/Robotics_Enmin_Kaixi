@@ -551,6 +551,68 @@ Verification:
 - Rendered PDF pages inspected for text overflow and figure/table readability.
 - Banned wording and first-person scan returned no matches.
 
+### Sixth Review High-Score Revision
+
+根据第六轮严格审查，完成以下非小修级改进：
+
+- 删除报告中会误导读者的 KF covariance 具体毫米数，改为说明 covariance 在当前 process-noise setting 下偏保守，最终只作为 diagnostic。
+- 将 balanced cost 从 late-like 策略重新调成真实中间 Pareto 点：50-seed success rate 仍为 `98%`，平均成功接球时间 `1.411 s`，平均 radial error `5.91 mm`。
+- 将 Pareto scan 改为与 final smart cost 相同的 cost 形式，避免图和表使用两套权衡逻辑。
+- 重跑主 benchmark、reactive baseline 和 high-score figures。
+- 补充报告中的候选过滤证据：396 个 candidate NLP 全部收敛，164 个通过 hoop-crossing check，平均每个 seed 7.9 个候选、3.3 个可行 catch。
+- 补充 \(w_o\in\{0,1,10,50\}\) orientation soft-cost ablation：time-first success rate 都为 `98%`，说明 hard top-side constraint 和 pose-aware normal term 决定最终几何。
+- 按用户要求删除报告中的 git/commit 相关 reproducibility 文字。
+
+Updated:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\strategy_benchmark.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\scripts\benchmark_high_score_strategies.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\scripts\render_high_score_figures.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\tests\test_strategy_benchmark.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\report_template\template.tex`
+
+Generated:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\report_template\final_report_research_grade_v5.pdf`
+- refreshed `Project\outputs\high_score\strategy_benchmark.json`
+- refreshed `Project\outputs\high_score\strategy_summary_table.csv`
+- refreshed `Project\outputs\high_score\figure_candidate_pareto.png`
+- refreshed `Project\outputs\high_score\figure_strategy_benchmark.png`
+- refreshed `Project\outputs\high_score\figure_failure_velocity_diagnostics.png`
+- orientation ablation outputs under `Project\outputs\high_score\orientation_w0`, `orientation_w1`, `orientation_w10`, and `orientation_w50`
+
+Verification:
+
+- `conda run -n robotics python -m unittest discover -s tests` passed: 20 tests.
+- Banned wording, first-person, `git`, and `commit` report scan returned no matches.
+- Tectonic compilation succeeded.
+- Final PDF has 7 pages total: title page, 5 body pages, references.
+- Exported PDF pages to PNG and inspected the setup page, Task 1/2/3 pages, Task 4 table/Pareto page, and final failure-analysis page.
+
+### Seventh Review Final Polish
+
+根据第七轮最终审查，完成低风险但能提高严谨性的最终润色：
+
+- 在 reactive baseline 公式后补充 \(K\) 为 proportional gain，\(\lambda\) 为 damping。
+- 在 Task 3 中明确定义 hoop open side：沿 \(+n_{\mathrm{hoop}}\) 方向，球必须从该侧穿过 hoop plane。
+- 在 Task 4 中加入量化 thesis 句：feasibility-aware selection 相比 simple attempted catch 只多约 `92 ms`，但成功率从 `0%` 提升到 `98%`。
+- 将 Pareto caption 改为 empirical candidate-weight scan，避免被误读成理论 Pareto frontier。
+- 扩展 URDF 修正的失败机制叙述：seed 11 best radial error 从 `145.2 mm` 降到 `51.5 mm`，seed 41 恢复到 `24.7 mm` 成功 crossing。
+- 更新 failure caption，明确 seed 11 接近 lateral velocity 的 95th percentile，失败机制是 geometry 而非 estimator/NLP。
+
+Generated:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\report_template\final_report_research_grade_v6.pdf`
+- rendered page images under `Project\report_template\rendered_pages\research_grade_v6-*.png`
+
+Verification:
+
+- `conda run -n robotics python -m unittest discover -s tests` passed: 20 tests.
+- Banned wording, first-person, `git`, and `commit` report scan returned no matches.
+- Tectonic compilation succeeded.
+- Final PDF has 7 pages total: title page, 5 body pages, references.
+- Rendered pages 3--6 inspected for the changed formula text, Task 4 tradeoff page, and final failure-analysis page.
+
 ### Final Review Fixes
 
 第五轮严格审查后的最终修复已完成：

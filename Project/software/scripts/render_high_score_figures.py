@@ -166,7 +166,7 @@ def _render_hoop_geometry(output_path: Path):
 def _render_candidate_pareto(benchmark: dict, output_path: Path):
     candidate_rows = benchmark["candidate_rows"]
     strategy_rows = benchmark["strategy_rows"]
-    time_weights = np.linspace(0.0, 1.4, 15)
+    time_weights = np.array([0.0, 1.0, 2.0, 3.0, 5.0, 7.5, 10.0, 15.0, 20.0, 30.0, 50.0, 75.0, 100.0, 150.0])
     curve = []
     for time_weight in time_weights:
         selected = []
@@ -181,9 +181,9 @@ def _render_candidate_pareto(benchmark: dict, output_path: Path):
                 feasible,
                 key=lambda row: (
                     time_weight * row["time_s"]
-                    + 120.0 * row["radial_error_m"]
-                    + 0.15 * row["max_abs_ddq"]
-                    + 0.15 * row["max_velocity_ratio"]
+                    + 100.0 * row["terminal_error_m"]
+                    + 0.20 * row["max_abs_ddq"]
+                    + 0.20 * row["max_velocity_ratio"]
                 ),
             )
             selected.append(best)
