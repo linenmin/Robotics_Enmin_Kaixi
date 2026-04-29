@@ -511,3 +511,42 @@ Verification:
 - Visual inspection passed for the revised setup, Task 2/3 transition, Task 4 benchmark page, and final summary page.
 - Banned wording and sentence-pattern scan returned no matches.
 - `final_report.pdf` could not be overwritten because another process had the file open, so the current compiled revision is saved as `final_report_revised.pdf`.
+
+### Research-Grade Report Revision
+
+根据第四轮严格审查，完成了一次结构性升级，而不是小修：
+
+- 将报告主线改为可证伪 thesis：核心瓶颈是 feasibility-aware candidate selection，而不是单纯估计器或控制器。
+- 将 Task 标题改成功能性标题，并保留 `addresses Task X`，方便老师按 PDF 核分。
+- 明确 open-loop 架构，并分离 planner terminal error、predicted radial error、true-ball radial error。
+- 新增 no-prediction reactive baseline：50 seeds 成功率 0%，平均 closest TCP-ball distance 为 `0.176 m`。
+- 将最终 benchmark 的成功判据改为真实球轨迹的 hoop-plane crossing，而不是预测轨迹 crossing。
+- 新增 KF covariance diagnostic：协方差主要随预测时间单调增长，未改善 failure seed 区分，因此保留为诊断而非最终 selector 主项。
+- 新增 geometry definition figure、candidate-selection Pareto/tradeoff figure、failure velocity diagnostic figure。
+- 更新课程知识点对齐段：C4 constraint-based programming、C5 direct-transcription optimal control、C3 RAC/SOT/minimum-jerk 对照。
+
+Updated:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\trajectory_predictor.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\strategy_benchmark.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\scripts\benchmark_high_score_strategies.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\scripts\benchmark_reactive_baseline.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\scripts\render_high_score_figures.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\report_template\template.tex`
+
+Generated:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\report_template\final_report_research_grade_v3.pdf`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\high_score\reactive_baseline.json`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\high_score\figure_hoop_geometry_definition.png`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\high_score\figure_candidate_pareto.png`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\high_score\figure_failure_velocity_diagnostics.png`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\high_score\candidate_pareto_scan.json`
+
+Verification:
+
+- `conda run -n robotics python -m unittest discover -s tests` passed: 19 tests.
+- Tectonic compilation succeeded.
+- Final PDF has 7 pages total: title page, 5 body pages, references.
+- Rendered PDF pages inspected for text overflow and figure/table readability.
+- Banned wording and first-person scan returned no matches.

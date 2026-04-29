@@ -21,6 +21,8 @@ class CandidateEvaluation:
     solve_time_s: float | None = None
     iter_count: int | None = None
     terminal_normal_alignment: float | None = None
+    position_uncertainty_m: float | None = None
+    predicted_radial_error: float | None = None
     plane_crossing_exists: bool = False
     crossing_time: float | None = None
     radial_error: float | None = None
@@ -107,6 +109,21 @@ def select_latest_nlp_feasible(candidates: list[CandidateEvaluation]) -> Strateg
         return _best_failed_selection("latest_nlp_feasible", candidates)
     selected = max(feasible, key=lambda candidate: candidate.time)
     return _selection("latest_nlp_feasible", selected, len(candidates), "selected_latest_feasible")
+
+
+def select_uncertainty_guard_feasible(candidates: list[CandidateEvaluation], max_uncertainty_m: float = 0.18) -> StrategySelection:
+    feasible = [
+        candidate
+        for candidate in candidates
+        if candidate.geometric_status == "accepted"
+        and candidate.success
+        and candidate.position_uncertainty_m is not None
+        and candidate.position_uncertainty_m <= max_uncertainty_m
+    ]
+    if not feasible:
+        return _best_failed_selection("uncertainty_guard_feasible", candidates)
+    selected = min(feasible, key=lambda candidate: candidate.time)
+    return _selection("uncertainty_guard_feasible", selected, len(candidates), "selected_earliest_low_uncertainty_feasible")
 
 
 def select_smart_cost(candidates: list[CandidateEvaluation]) -> StrategySelection:

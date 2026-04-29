@@ -1,0 +1,470 @@
+{
+  "settings": {
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49
+    ],
+    "measurement_noise_std_m": 0.001,
+    "controller": "damped Jacobian pseudo-inverse Cartesian velocity tracking of current noisy ball position",
+    "success_proxy": "closest TCP-to-true-ball distance <= 0.03 m; this is a favourable proxy because it ignores hoop-plane orientation."
+  },
+  "summary": {
+    "n": 50,
+    "success_count": 0,
+    "success_rate": 0.0,
+    "mean_closest_tcp_ball_distance_m": 0.17642889263286005,
+    "std_closest_tcp_ball_distance_m": 0.05812087290875084,
+    "min_closest_tcp_ball_distance_m": 0.05943995110558686,
+    "p95_closest_tcp_ball_distance_m": 0.27226903022879373
+  },
+  "rows": [
+    {
+      "seed": 0,
+      "success": false,
+      "closest_time_s": 1.4,
+      "closest_tcp_ball_distance_m": 0.1158104832157856,
+      "max_velocity_ratio": 0.4814814814814817,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 1,
+      "success": false,
+      "closest_time_s": 1.4,
+      "closest_tcp_ball_distance_m": 0.1024851608407209,
+      "max_velocity_ratio": 0.5000000000000002,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 2,
+      "success": false,
+      "closest_time_s": 1.4,
+      "closest_tcp_ball_distance_m": 0.22172849038436143,
+      "max_velocity_ratio": 0.5370370370370373,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 3,
+      "success": false,
+      "closest_time_s": 1.4,
+      "closest_tcp_ball_distance_m": 0.11345906046035634,
+      "max_velocity_ratio": 0.4815962810222382,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 4,
+      "success": false,
+      "closest_time_s": 1.3900000000000001,
+      "closest_tcp_ball_distance_m": 0.22416225798368794,
+      "max_velocity_ratio": 0.44444444444444464,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 5,
+      "success": false,
+      "closest_time_s": 1.4,
+      "closest_tcp_ball_distance_m": 0.20303389557274615,
+      "max_velocity_ratio": 0.5227596659050558,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 6,
+      "success": false,
+      "closest_time_s": 1.3900000000000001,
+      "closest_tcp_ball_distance_m": 0.18793525212050283,
+      "max_velocity_ratio": 0.46296296296296313,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 7,
+      "success": false,
+      "closest_time_s": 1.4100000000000001,
+      "closest_tcp_ball_distance_m": 0.2063373187127048,
+      "max_velocity_ratio": 0.5370370370370373,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 8,
+      "success": false,
+      "closest_time_s": 1.3900000000000001,
+      "closest_tcp_ball_distance_m": 0.2842296975739805,
+      "max_velocity_ratio": 0.5554837332447536,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 9,
+      "success": false,
+      "closest_time_s": 1.4100000000000001,
+      "closest_tcp_ball_distance_m": 0.19143773334476685,
+      "max_velocity_ratio": 0.5462962962962965,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 10,
+      "success": false,
+      "closest_time_s": 1.4,
+      "closest_tcp_ball_distance_m": 0.21994349429417434,
+      "max_velocity_ratio": 0.5169046692276154,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 11,
+      "success": false,
+      "closest_time_s": 1.4100000000000001,
+      "closest_tcp_ball_distance_m": 0.2856235583961043,
+      "max_velocity_ratio": 0.5648148148148151,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 12,
+      "success": false,
+      "closest_time_s": 1.4,
+      "closest_tcp_ball_distance_m": 0.17097164743798343,
+      "max_velocity_ratio": 0.527777777777778,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 13,
+      "success": false,
+      "closest_time_s": 1.3900000000000001,
+      "closest_tcp_ball_distance_m": 0.16010354167750776,
+      "max_velocity_ratio": 0.4814814814814817,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 14,
+      "success": false,
+      "closest_time_s": 1.4,
+      "closest_tcp_ball_distance_m": 0.1322191590706027,
+      "max_velocity_ratio": 0.4907407407407409,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 15,
+      "success": false,
+      "closest_time_s": 1.3900000000000001,
+      "closest_tcp_ball_distance_m": 0.1884100361408918,
+      "max_velocity_ratio": 0.47222222222222243,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 16,
+      "success": false,
+      "closest_time_s": 1.4,
+      "closest_tcp_ball_distance_m": 0.09921711681317451,
+      "max_velocity_ratio": 0.527777777777778,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 17,
+      "success": false,
+      "closest_time_s": 1.4,
+      "closest_tcp_ball_distance_m": 0.06623656989457888,
+      "max_velocity_ratio": 0.5185185185185187,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 18,
+      "success": false,
+      "closest_time_s": 1.3900000000000001,
+      "closest_tcp_ball_distance_m": 0.09565131866714528,
+      "max_velocity_ratio": 0.4814814814814817,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 19,
+      "success": false,
+      "closest_time_s": 1.4100000000000001,
+      "closest_tcp_ball_distance_m": 0.1940531257769401,
+      "max_velocity_ratio": 0.5370370370370373,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 20,
+      "success": false,
+      "closest_time_s": 1.4,
+      "closest_tcp_ball_distance_m": 0.19962393383583518,
+      "max_velocity_ratio": 0.4814814814814817,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 21,
+      "success": false,
+      "closest_time_s": 1.4100000000000001,
+      "closest_tcp_ball_distance_m": 0.21554819775872397,
+      "max_velocity_ratio": 0.5555555555555558,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 22,
+      "success": false,
+      "closest_time_s": 1.4,
+      "closest_tcp_ball_distance_m": 0.10854599104957156,
+      "max_velocity_ratio": 0.527777777777778,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 23,
+      "success": false,
+      "closest_time_s": 1.4,
+      "closest_tcp_ball_distance_m": 0.21706699604785482,
+      "max_velocity_ratio": 0.4907407407407409,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 24,
+      "success": false,
+      "closest_time_s": 1.3900000000000001,
+      "closest_tcp_ball_distance_m": 0.23940095580774737,
+      "max_velocity_ratio": 0.44439513526807956,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 25,
+      "success": false,
+      "closest_time_s": 1.3900000000000001,
+      "closest_tcp_ball_distance_m": 0.1869154430843638,
+      "max_velocity_ratio": 0.45370370370370394,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 26,
+      "success": false,
+      "closest_time_s": 1.4,
+      "closest_tcp_ball_distance_m": 0.05943995110558686,
+      "max_velocity_ratio": 0.5185185185185187,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 27,
+      "success": false,
+      "closest_time_s": 1.4,
+      "closest_tcp_ball_distance_m": 0.1457677628890383,
+      "max_velocity_ratio": 0.5000000000000002,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 28,
+      "success": false,
+      "closest_time_s": 1.3900000000000001,
+      "closest_tcp_ball_distance_m": 0.1291167740473761,
+      "max_velocity_ratio": 0.47137561920233034,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 29,
+      "success": false,
+      "closest_time_s": 1.3900000000000001,
+      "closest_tcp_ball_distance_m": 0.17775289898873126,
+      "max_velocity_ratio": 0.46296296296296313,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 30,
+      "success": false,
+      "closest_time_s": 1.3900000000000001,
+      "closest_tcp_ball_distance_m": 0.09707453447654105,
+      "max_velocity_ratio": 0.4814814814814817,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 31,
+      "success": false,
+      "closest_time_s": 1.4,
+      "closest_tcp_ball_distance_m": 0.23565670514928524,
+      "max_velocity_ratio": 0.5185185185185187,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 32,
+      "success": false,
+      "closest_time_s": 1.3900000000000001,
+      "closest_tcp_ball_distance_m": 0.17260878625634735,
+      "max_velocity_ratio": 0.46296296296296313,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 33,
+      "success": false,
+      "closest_time_s": 1.4,
+      "closest_tcp_ball_distance_m": 0.09332365775498014,
+      "max_velocity_ratio": 0.5252256969669673,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 34,
+      "success": false,
+      "closest_time_s": 1.4100000000000001,
+      "closest_tcp_ball_distance_m": 0.2185835755385421,
+      "max_velocity_ratio": 0.5440334674096318,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 35,
+      "success": false,
+      "closest_time_s": 1.4,
+      "closest_tcp_ball_distance_m": 0.0817487987954124,
+      "max_velocity_ratio": 0.5092592592592595,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 36,
+      "success": false,
+      "closest_time_s": 1.3900000000000001,
+      "closest_tcp_ball_distance_m": 0.13363592590534776,
+      "max_velocity_ratio": 0.46296296296296313,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 37,
+      "success": false,
+      "closest_time_s": 1.3900000000000001,
+      "closest_tcp_ball_distance_m": 0.20700231241218206,
+      "max_velocity_ratio": 0.44444444444444464,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 38,
+      "success": false,
+      "closest_time_s": 1.4,
+      "closest_tcp_ball_distance_m": 0.17042758140529227,
+      "max_velocity_ratio": 0.5092592592592595,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 39,
+      "success": false,
+      "closest_time_s": 1.4,
+      "closest_tcp_ball_distance_m": 0.1478324342134733,
+      "max_velocity_ratio": 0.4907407407407409,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 40,
+      "success": false,
+      "closest_time_s": 1.4,
+      "closest_tcp_ball_distance_m": 0.2112484972878006,
+      "max_velocity_ratio": 0.5370370370370373,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 41,
+      "success": false,
+      "closest_time_s": 1.4100000000000001,
+      "closest_tcp_ball_distance_m": 0.2528022247441629,
+      "max_velocity_ratio": 0.5555555555555558,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 42,
+      "success": false,
+      "closest_time_s": 1.4,
+      "closest_tcp_ball_distance_m": 0.22076227015848257,
+      "max_velocity_ratio": 0.5092592592592595,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 43,
+      "success": false,
+      "closest_time_s": 1.4100000000000001,
+      "closest_tcp_ball_distance_m": 0.15369275150686632,
+      "max_velocity_ratio": 0.5370370370370373,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 44,
+      "success": false,
+      "closest_time_s": 1.3900000000000001,
+      "closest_tcp_ball_distance_m": 0.20195570887801137,
+      "max_velocity_ratio": 0.4814814814814817,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 45,
+      "success": false,
+      "closest_time_s": 1.3900000000000001,
+      "closest_tcp_ball_distance_m": 0.23351646131305534,
+      "max_velocity_ratio": 0.4380533116014972,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 46,
+      "success": false,
+      "closest_time_s": 1.3900000000000001,
+      "closest_tcp_ball_distance_m": 0.16111474782194765,
+      "max_velocity_ratio": 0.46296296296296313,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 47,
+      "success": false,
+      "closest_time_s": 1.4100000000000001,
+      "closest_tcp_ball_distance_m": 0.2781592292663751,
+      "max_velocity_ratio": 0.5370370370370373,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 48,
+      "success": false,
+      "closest_time_s": 1.4100000000000001,
+      "closest_tcp_ball_distance_m": 0.2650698980717499,
+      "max_velocity_ratio": 0.5462962962962965,
+      "max_abs_ddq": 2.0
+    },
+    {
+      "seed": 49,
+      "success": false,
+      "closest_time_s": 1.4,
+      "closest_tcp_ball_distance_m": 0.14300070769360015,
+      "max_velocity_ratio": 0.527777777777778,
+      "max_abs_ddq": 2.0
+    }
+  ]
+}

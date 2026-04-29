@@ -25,10 +25,11 @@ from strategy_benchmark import (
     select_latest_nlp_feasible,
     select_simple_geometric,
     select_smart_cost,
+    select_uncertainty_guard_feasible,
     summarize_strategy_rows,
 )
-from trajectory_predictor import LinearKalmanTrajectoryPredictor
-from utils.ball_simulation import BallSimulation
+from trajectory_predictor import LinearKalmanTrajectoryPredictor, TrajectoryPrediction
+from utils.ball_simulation import BallSimulation, GRAVITY
 
 
 def run_benchmark(
@@ -50,10 +51,11 @@ def run_benchmark(
     candidate_rows = []
     strategy_rows = []
     for seed in seeds:
-        prediction, current_time = _make_prediction(seed, measurement_noise_std=measurement_noise_std)
+        prediction, current_time, true_future = _make_prediction(seed, measurement_noise_std=measurement_noise_std)
         candidates = _evaluate_common_candidate_pool(
             seed=seed,
             prediction=prediction,
+            true_future=true_future,
             current_time=current_time,
             workspace_center=workspace_center,
             robot=robot,
@@ -71,6 +73,7 @@ def run_benchmark(
                 select_simple_geometric(candidates).to_row(seed),
                 select_earliest_nlp_feasible(candidates).to_row(seed),
                 select_latest_nlp_feasible(candidates).to_row(seed),
+                select_uncertainty_guard_feasible(candidates).to_row(seed),
                 select_smart_cost(candidates).to_row(seed),
             ]
         )
@@ -106,7 +109,29 @@ def _make_prediction(seed: int, measurement_noise_std: float = 1e-3):
         simulation.update(0.01)
         measurement = simulation.positions[0] + np.random.normal(0.0, measurement_noise_std, size=3)
         predictor.step(measurement)
-    return predictor.predict(horizon=0.8, dt=0.02), predictor.time
+    prediction = predictor.predict(horizon=0.8, dt=0.02)
+    true_future = _true_future_from_simulation(simulation, prediction.times, predictor.time)
+    return prediction, predictor.time, true_future
+
+
+def _true_future_from_simulation(simulation: BallSimulation, times: np.ndarray, current_time: float) -> TrajectoryPrediction:
+    positions = simulation.positions.copy()
+    velocities = simulation.velocities.copy()
+    future_positions = []
+    last_time = float(current_time)
+    for time in times:
+        dt = float(time) - last_time
+        positions = positions + velocities * dt + 0.5 * GRAVITY * dt**2
+        velocities = velocities + GRAVITY * dt
+        for i in range(positions.shape[0]):
+            if positions[i, 2] < BallSimulation.ball_radius:
+                positions[i, 2] = BallSimulation.ball_radius
+                velocities[i, 2] *= -0.8
+                if velocities[i, 2] < 0.05:
+                    velocities[i, 2] = 0
+        future_positions.append(positions[0].copy())
+        last_time = float(time)
+    return TrajectoryPrediction(times=times.copy(), positions=np.asarray(future_positions))
 
 
 def _controller_for_time(robot, tcp_pose, candidate_time: float, current_time: float):
@@ -127,6 +152,7 @@ def _controller_for_time(robot, tcp_pose, candidate_time: float, current_time: f
 def _evaluate_common_candidate_pool(
     seed: int,
     prediction,
+    true_future,
     current_time: float,
     workspace_center: np.ndarray,
     robot,
@@ -170,7 +196,7 @@ def _evaluate_common_candidate_pool(
         hoop_center = np.asarray(hoop_center, dtype=float).reshape(3)
         hoop_rotation = np.asarray(hoop_rotation, dtype=float)
         hoop_normal = hoop_rotation[:, 0]
-        crossing = evaluate_hoop_crossing(
+        predicted_crossing = evaluate_hoop_crossing(
             times=prediction.times,
             ball_positions=prediction.positions,
             hoop_center=hoop_center,
@@ -178,6 +204,17 @@ def _evaluate_common_candidate_pool(
             hoop_radius=0.15,
             ball_radius=BallSimulation.ball_radius,
         )
+        true_crossing = evaluate_hoop_crossing(
+            times=true_future.times,
+            ball_positions=true_future.positions,
+            hoop_center=hoop_center,
+            hoop_normal=hoop_normal,
+            hoop_radius=0.15,
+            ball_radius=BallSimulation.ball_radius,
+        )
+        position_uncertainty = None
+        if prediction.covariances is not None:
+            position_uncertainty = float(np.sqrt(np.trace(prediction.covariances[index])))
         candidates.append(
             CandidateEvaluation(
                 seed=seed,
@@ -186,7 +223,7 @@ def _evaluate_common_candidate_pool(
                 position=position,
                 geometric_status=status,
                 nlp_success=bool(plan.success),
-                passes_hoop=bool(crossing.passes_through_hoop),
+                passes_hoop=bool(true_crossing.passes_through_hoop),
                 terminal_error=terminal_error,
                 max_abs_ddq=float(np.max(np.abs(plan.ddq))),
                 max_velocity_ratio=float(np.max(np.abs(plan.dq) / limits.velocity.reshape(1, -1))),
@@ -195,11 +232,13 @@ def _evaluate_common_candidate_pool(
                 solve_time_s=float(plan.solve_time_s),
                 iter_count=int(plan.iter_count),
                 terminal_normal_alignment=float(plan.terminal_normal_alignment),
-                plane_crossing_exists=bool(crossing.plane_crossing_exists),
-                crossing_time=crossing.crossing_time,
-                radial_error=crossing.radial_error,
-                effective_tolerance=crossing.effective_tolerance,
-                crossing_reason=crossing.reason,
+                position_uncertainty_m=position_uncertainty,
+                predicted_radial_error=predicted_crossing.radial_error,
+                plane_crossing_exists=bool(true_crossing.plane_crossing_exists),
+                crossing_time=true_crossing.crossing_time,
+                radial_error=true_crossing.radial_error,
+                effective_tolerance=true_crossing.effective_tolerance,
+                crossing_reason=true_crossing.reason,
                 min_tcp_table_clearance=float(safety_metrics.get("min_tcp_table_clearance_m", float("nan"))),
                 min_frame_table_clearance=float(safety_metrics.get("min_frame_table_clearance_m", float("nan"))),
                 min_self_sphere_clearance=float(safety_metrics.get("min_self_sphere_clearance_m", float("nan"))),
@@ -261,6 +300,8 @@ def _candidate_to_row(candidate: CandidateEvaluation) -> dict:
         "solve_time_s": candidate.solve_time_s,
         "iter_count": candidate.iter_count,
         "terminal_normal_alignment": candidate.terminal_normal_alignment,
+        "position_uncertainty_m": candidate.position_uncertainty_m,
+        "predicted_radial_error_m": candidate.predicted_radial_error,
     }
 
 

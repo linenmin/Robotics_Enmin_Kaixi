@@ -10,6 +10,7 @@ GRAVITY = np.array([0.0, 0.0, -9.81], dtype=float)
 class TrajectoryPrediction:
     times: np.ndarray
     positions: np.ndarray
+    covariances: np.ndarray | None = None
 
 
 class LinearKalmanTrajectoryPredictor:
@@ -73,13 +74,18 @@ class LinearKalmanTrajectoryPredictor:
         offsets = prediction_dt * np.arange(1, steps + 1)
 
         positions = []
+        covariances = []
         for offset in offsets:
             position = self.state[:3] + self.state[3:] * offset + 0.5 * self.gravity * offset**2
             positions.append(position)
+            transition, _, process = self._model_matrices(offset)
+            future_covariance = transition @ self.covariance @ transition.T + process
+            covariances.append(future_covariance[:3, :3])
 
         return TrajectoryPrediction(
             times=self.time + offsets,
             positions=np.vstack(positions),
+            covariances=np.asarray(covariances),
         )
 
     def _model_matrices(self, dt: float):
