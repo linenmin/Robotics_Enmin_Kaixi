@@ -6,7 +6,7 @@
   "distance_reduction_m": 0.7111876450214442,
   "terminal_error_m": 0.020121493398955904,
   "objective_value": 3.403740404061483,
-  "solve_time_s": 0.0709086999995634,
+  "solve_time_s": 0.11184219999995548,
   "iter_count": 15,
   "terminal_normal_alignment": null,
   "min_tcp_top_z": 0.7324768717477507,

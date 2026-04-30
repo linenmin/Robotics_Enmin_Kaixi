@@ -283,7 +283,7 @@ def plot_candidate_cost_landscape(benchmark: dict, output_path: Path):
 
 
 def plot_system_block(output_path: Path):
-    fig, ax = plt.subplots(figsize=(7.6, 2.1), constrained_layout=True)
+    fig, ax = plt.subplots(figsize=(9.2, 2.45), constrained_layout=True)
     ax.set_axis_off()
     boxes = [
         ("noisy ball\npositions", 0.08),
@@ -296,11 +296,12 @@ def plot_system_block(output_path: Path):
     for label, x in boxes:
         rect = plt.Rectangle((x - 0.06, 0.36), 0.12, 0.32, facecolor="#f5f5f5", edgecolor="black", linewidth=1.0)
         ax.add_patch(rect)
-        ax.text(x, 0.52, label, ha="center", va="center", fontsize=8.5)
+        ax.text(x, 0.52, label, ha="center", va="center", fontsize=10.0)
     for (_, x0), (_, x1) in zip(boxes[:-1], boxes[1:], strict=True):
         ax.annotate("", xy=(x1 - 0.068, 0.52), xytext=(x0 + 0.068, 0.52), arrowprops={"arrowstyle": "->", "lw": 1.2})
-    ax.text(0.50, 0.14, "Shared timeline: prediction time, candidate time, UR10 motion, and hoop crossing use one clock.", ha="center", fontsize=8.5)
+    ax.text(0.50, 0.14, "Shared timeline: prediction time, candidate time, UR10 motion, and hoop crossing use one clock.", ha="center", fontsize=9.5)
     fig.savefig(output_path, dpi=260)
+    fig.savefig(output_path.with_suffix(".pdf"))
     plt.close(fig)
 
 

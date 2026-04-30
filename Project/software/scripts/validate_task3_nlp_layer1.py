@@ -91,7 +91,7 @@ def plot_plan(result, target_position, figure_path):
     steps = np.arange(result.tcp_positions.shape[0])
     errors = np.linalg.norm(result.tcp_positions - target_position.reshape(1, 3), axis=1)
 
-    fig = plt.figure(figsize=(10.0, 4.5))
+    fig = plt.figure(figsize=(11.0, 5.0))
     ax_3d = fig.add_subplot(1, 2, 1, projection="3d")
     ax_err = fig.add_subplot(1, 2, 2)
 
@@ -119,12 +119,24 @@ def plot_plan(result, target_position, figure_path):
     ax_3d.legend(loc="upper left", fontsize=8)
 
     ax_err.plot(steps, errors, color="tab:blue", marker="o", markersize=3)
+    terminal_error = float(errors[-1])
+    ax_err.axhline(terminal_error, color="tab:red", linestyle="--", linewidth=1.1)
+    ax_err.annotate(
+        f"terminal error = {terminal_error * 1000:.1f} mm",
+        xy=(steps[3], terminal_error),
+        xytext=(steps[3], terminal_error + 0.015),
+        fontsize=9,
+        color="tab:red",
+        ha="left",
+        va="bottom",
+    )
     ax_err.set_xlabel("NLP knot")
     ax_err.set_ylabel("tcp-target distance [m]")
     ax_err.grid(True, alpha=0.3)
 
     fig.tight_layout()
     fig.savefig(figure_path, dpi=180)
+    fig.savefig(figure_path.with_suffix(".pdf"))
     plt.close(fig)
 
 
@@ -161,6 +173,7 @@ def plot_joint_limits(result, limits, dt: float, figure_path: Path):
         ax.spines["right"].set_visible(False)
     axes[0].legend(ncol=6, fontsize=8, frameon=False, loc="upper center", bbox_to_anchor=(0.5, 1.02))
     fig.savefig(figure_path, dpi=240)
+    fig.savefig(figure_path.with_suffix(".pdf"))
     plt.close(fig)
 
 

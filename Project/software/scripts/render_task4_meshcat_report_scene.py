@@ -1,5 +1,6 @@
 import argparse
 import sys
+import time
 from pathlib import Path
 
 import meshcat.geometry as mg
@@ -24,7 +25,7 @@ from trajectory_predictor import LinearKalmanTrajectoryPredictor
 from utils.ball_simulation import BallSimulation
 
 
-def render_scene(seed: int, output_html: Path, camera_view: str, show_target_markers: bool, simple_max_distance: float):
+def render_scene(seed: int, output_html: Path, camera_view: str, show_target_markers: bool, simple_max_distance: float, keep_alive_seconds: float):
     prediction, observed, current_time = _make_prediction(seed)
     robot = load_project_robot(SOFTWARE_DIR)
     tcp_pose = build_tcp_pose_function(robot)
@@ -47,10 +48,14 @@ def render_scene(seed: int, output_html: Path, camera_view: str, show_target_mar
     viz.displayFrames(False)
     viz.display(plan.q[-1])
     _add_clean_scene(viz, prediction, observed, simple_result, smart_result, show_target_markers)
-    _set_report_camera(viz, camera_view)
+    if camera_view != "free":
+        _set_report_camera(viz, camera_view)
 
     output_html.parent.mkdir(parents=True, exist_ok=True)
     output_html.write_text(viz.viewer.static_html(), encoding="utf-8")
+    if keep_alive_seconds > 0:
+        print(f"Live Meshcat scene is available for {keep_alive_seconds:.0f} seconds.")
+        time.sleep(keep_alive_seconds)
     return {
         "html": str(output_html),
         "terminal_error_m": float(plan.terminal_error),
@@ -121,28 +126,26 @@ def _controller_for_time(robot, tcp_pose, candidate_time, current_time):
 
 def _add_clean_scene(viz, prediction, observed, simple_result, smart_result, show_target_markers: bool):
     viewer = viz.viewer
-    viewer["task4_report/caught_ball"].set_object(mg.Sphere(BallSimulation.ball_radius), mg.MeshPhongMaterial(color=0x4DAF4A))
-    viewer["task4_report/caught_ball"].set_transform(translation_matrix(smart_result.position))
     if show_target_markers:
-        marker_offset = np.array([0.0, -0.16, 0.0])
-        marker_radius = 0.05
+        marker_offset = np.zeros(3)
+        marker_radius = BallSimulation.ball_radius
         if simple_result.success:
             viewer["task4_report/simple_target_marker"].set_object(
                 mg.Sphere(marker_radius),
-                mg.MeshPhongMaterial(color=0xE41A1C, opacity=0.9),
+                mg.MeshPhongMaterial(color=0xE41A1C, opacity=0.92),
             )
             viewer["task4_report/simple_target_marker"].set_transform(translation_matrix(simple_result.position + marker_offset))
         viewer["task4_report/smart_target_marker"].set_object(
             mg.Sphere(marker_radius),
-            mg.MeshPhongMaterial(color=0xFFD700, opacity=0.9),
+            mg.MeshPhongMaterial(color=0xFFD700, opacity=0.92),
         )
         viewer["task4_report/smart_target_marker"].set_transform(translation_matrix(smart_result.position + marker_offset))
 
     for i, pos in enumerate(prediction.positions[::4]):
-        viewer[f"task4_report/predicted_path/{i:02d}"].set_object(mg.Sphere(0.018), mg.MeshPhongMaterial(color=0x77DD77, opacity=0.28))
+        viewer[f"task4_report/predicted_path/{i:02d}"].set_object(mg.Sphere(0.032), mg.MeshPhongMaterial(color=0x77DD77, opacity=0.72))
         viewer[f"task4_report/predicted_path/{i:02d}"].set_transform(translation_matrix(pos))
     for i, pos in enumerate(observed[::10]):
-        viewer[f"task4_report/observed_path/{i:02d}"].set_object(mg.Sphere(0.012), mg.MeshPhongMaterial(color=0x555555, opacity=0.35))
+        viewer[f"task4_report/observed_path/{i:02d}"].set_object(mg.Sphere(0.026), mg.MeshPhongMaterial(color=0x555555, opacity=0.72))
         viewer[f"task4_report/observed_path/{i:02d}"].set_transform(translation_matrix(pos))
 
 
@@ -162,14 +165,22 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Render a clean Meshcat UR10 scene for the report.")
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--output-html", type=Path, default=Path("../outputs/task4/task4_report_mesh_scene_seed0.html"))
-    parser.add_argument("--camera-view", choices=["three-quarter", "side", "front"], default="three-quarter")
+    parser.add_argument("--camera-view", choices=["three-quarter", "side", "front", "free"], default="three-quarter")
     parser.add_argument("--show-target-markers", action="store_true")
     parser.add_argument("--simple-max-distance", type=float, default=0.85)
+    parser.add_argument("--keep-alive-seconds", type=float, default=0.0)
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_args()
-    result = render_scene(args.seed, args.output_html, args.camera_view, args.show_target_markers, args.simple_max_distance)
+    result = render_scene(
+        args.seed,
+        args.output_html,
+        args.camera_view,
+        args.show_target_markers,
+        args.simple_max_distance,
+        args.keep_alive_seconds,
+    )
     for key, value in result.items():
         print(f"{key}: {value}")

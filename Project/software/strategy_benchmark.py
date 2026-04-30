@@ -15,7 +15,9 @@ class CandidateEvaluation:
     passes_hoop: bool
     terminal_error: float
     max_abs_ddq: float
+    max_abs_ddq_joint: int | None
     max_velocity_ratio: float
+    max_velocity_ratio_joint: int | None
     safety_penalty: float
     solver_status: str
     solve_time_s: float | None = None
@@ -46,7 +48,9 @@ class StrategySelection:
     selected_time: float | None
     selected_terminal_error: float | None
     selected_max_abs_ddq: float | None
+    selected_max_abs_ddq_joint: int | None
     selected_max_velocity_ratio: float | None
+    selected_max_velocity_ratio_joint: int | None
     selected_solver_status: str | None
     selected_solve_time_s: float | None
     selected_iter_count: int | None
@@ -70,7 +74,9 @@ class StrategySelection:
             "catch_time_s": self.selected_time,
             "terminal_error_m": self.selected_terminal_error,
             "max_abs_ddq": self.selected_max_abs_ddq,
+            "max_abs_ddq_joint": self.selected_max_abs_ddq_joint,
             "max_velocity_ratio": self.selected_max_velocity_ratio,
+            "max_velocity_ratio_joint": self.selected_max_velocity_ratio_joint,
             "solver_status": self.selected_solver_status,
             "solve_time_s": self.selected_solve_time_s,
             "iter_count": self.selected_iter_count,
@@ -182,7 +188,9 @@ def _selection(strategy: str, selected: CandidateEvaluation, pool_size: int, rea
         selected_time=float(selected.time),
         selected_terminal_error=float(selected.terminal_error),
         selected_max_abs_ddq=float(selected.max_abs_ddq),
+        selected_max_abs_ddq_joint=selected.max_abs_ddq_joint,
         selected_max_velocity_ratio=float(selected.max_velocity_ratio),
+        selected_max_velocity_ratio_joint=selected.max_velocity_ratio_joint,
         selected_solver_status=selected.solver_status,
         selected_solve_time_s=selected.solve_time_s,
         selected_iter_count=selected.iter_count,
@@ -203,6 +211,8 @@ def _empty_selection(strategy: str, reason: str, pool_size: int) -> StrategySele
     return StrategySelection(
         strategy,
         False,
+        None,
+        None,
         None,
         None,
         None,

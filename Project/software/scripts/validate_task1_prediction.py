@@ -47,6 +47,7 @@ def run_validation(seed: int, steps: int, dt: float, prediction_horizon: float, 
 
     output_dir.mkdir(parents=True, exist_ok=True)
     figure_path = output_dir / "task1_trajectory_prediction.png"
+    figure_pdf_path = output_dir / "task1_trajectory_prediction.pdf"
     metrics_path = output_dir / "task1_metrics.json"
 
     metrics = compute_metrics(
@@ -65,6 +66,7 @@ def run_validation(seed: int, steps: int, dt: float, prediction_horizon: float, 
         true_positions=true_positions,
         prediction=prediction,
         figure_path=figure_path,
+        figure_pdf_path=figure_pdf_path,
     )
 
     return metrics_path, figure_path, metrics
@@ -91,52 +93,37 @@ def rmse(errors):
     return float(np.sqrt(np.mean(np.sum(errors**2, axis=1))))
 
 
-def plot_prediction(times, measurements, filtered_positions, true_positions, prediction, figure_path):
-    fig = plt.figure(figsize=(10.0, 4.5))
-    ax_3d = fig.add_subplot(1, 2, 1, projection="3d")
-    ax_z = fig.add_subplot(1, 2, 2)
+def plot_prediction(times, measurements, filtered_positions, true_positions, prediction, figure_path, figure_pdf_path):
+    fig, axes = plt.subplots(2, 1, figsize=(8.7, 6.0), constrained_layout=True)
+    ax_z, ax_err = axes
 
-    ax_3d.plot(true_positions[:, 0], true_positions[:, 1], true_positions[:, 2], label="true", color="black")
-    ax_3d.scatter(
-        measurements[:, 0],
-        measurements[:, 1],
-        measurements[:, 2],
-        label="measured",
-        s=6,
-        alpha=0.35,
-        color="tab:orange",
-    )
-    ax_3d.plot(
-        filtered_positions[:, 0],
-        filtered_positions[:, 1],
-        filtered_positions[:, 2],
-        label="filtered",
-        color="tab:blue",
-    )
-    ax_3d.plot(
-        prediction.positions[:, 0],
-        prediction.positions[:, 1],
-        prediction.positions[:, 2],
-        label="future prediction",
-        color="tab:green",
-        linestyle="--",
-    )
-    ax_3d.set_xlabel("x [m]")
-    ax_3d.set_ylabel("y [m]")
-    ax_3d.set_zlabel("z [m]")
-    ax_3d.legend(loc="upper left", fontsize=8)
+    ax_z.plot(times, true_positions[:, 2], label="true z", color="black", linewidth=1.8)
+    ax_z.scatter(times, measurements[:, 2], label="measured z", s=10, alpha=0.45, color="tab:orange")
+    ax_z.plot(times, filtered_positions[:, 2], label="filtered z", color="tab:blue", linewidth=1.5)
+    ax_z.plot(prediction.times, prediction.positions[:, 2], label="0.5 s prediction", color="tab:green", linestyle="--", linewidth=1.8)
+    ax_z.axvline(times[-1], color="0.45", linestyle=":", linewidth=1.0)
+    ax_z.text(times[-1] + 0.01, np.min(true_positions[:, 2]) + 0.05, "prediction starts", fontsize=9, color="0.35")
+    ax_z.set_ylabel("height z [m]")
+    ax_z.set_title("Kalman tracking and forward prediction")
+    ax_z.grid(True, alpha=0.25)
+    ax_z.legend(loc="best", fontsize=8.5, ncol=2)
 
-    ax_z.plot(times, true_positions[:, 2], label="true z", color="black")
-    ax_z.scatter(times, measurements[:, 2], label="measured z", s=6, alpha=0.35, color="tab:orange")
-    ax_z.plot(times, filtered_positions[:, 2], label="filtered z", color="tab:blue")
-    ax_z.plot(prediction.times, prediction.positions[:, 2], label="predicted z", color="tab:green", linestyle="--")
-    ax_z.set_xlabel("time [s]")
-    ax_z.set_ylabel("z [m]")
-    ax_z.grid(True, alpha=0.3)
-    ax_z.legend(loc="best", fontsize=8)
+    measurement_error = np.linalg.norm(measurements - true_positions, axis=1) * 1000.0
+    filtered_error = np.linalg.norm(filtered_positions - true_positions, axis=1) * 1000.0
+    ax_err.plot(times, measurement_error, color="tab:orange", alpha=0.75, label="measurement error")
+    ax_err.plot(times, filtered_error, color="tab:blue", linewidth=1.6, label="filtered error")
+    ax_err.set_xlabel("time [s]")
+    ax_err.set_ylabel("position error [mm]")
+    ax_err.set_title("Zoom on measurement noise and filter correction")
+    ax_err.grid(True, alpha=0.25)
+    ax_err.legend(loc="best", fontsize=8.5)
 
-    fig.tight_layout()
-    fig.savefig(figure_path, dpi=180)
+    for ax in axes:
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+
+    fig.savefig(figure_path, dpi=260)
+    fig.savefig(figure_pdf_path)
     plt.close(fig)
 
 

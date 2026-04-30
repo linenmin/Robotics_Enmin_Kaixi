@@ -91,27 +91,24 @@ def _boxplot_metric(ax, rows, strategies, labels, colors, key, ylabel, only_succ
 def _render_side_by_side(task2_plot: Path, mesh_side_plot: Path, output_path: Path):
     left = Image.open(task2_plot).convert("RGB")
     right = Image.open(mesh_side_plot).convert("RGB")
-    target_height = 760
+    target_height = 860
     left = _resize_to_height(left, target_height)
     right = _resize_to_height(right, target_height)
     width = left.width + right.width + 36
-    height = target_height + 122
+    height = target_height + 70
     canvas = Image.new("RGB", (width, height), "white")
     draw = ImageDraw.Draw(canvas)
     font = _font(28)
-    small_font = _font(20)
     draw.text((18, 14), "(a) Predicted trajectory and Task 2 candidate filtering", fill="black", font=font)
     draw.text((left.width + 54, 14), "(b) Same side-view geometry with UR10 mesh", fill="black", font=font)
     canvas.paste(left, (0, 70))
     canvas.paste(right, (left.width + 36, 70))
-    caption_y = target_height + 84
-    draw.text((18, caption_y), "Same color semantics as Task 2: red = simple candidate, yellow = smart candidate.", fill="black", font=small_font)
-    draw.text((left.width + 54, caption_y), "Green sphere shows the physical ball at the smart catch point.", fill="black", font=small_font)
     canvas.save(output_path)
+    canvas.save(output_path.with_suffix(".pdf"))
 
 
 def _render_hoop_geometry(output_path: Path):
-    fig, axes = plt.subplots(1, 2, figsize=(9.2, 3.4), constrained_layout=True)
+    fig, axes = plt.subplots(1, 2, figsize=(10.4, 4.0), constrained_layout=True)
     fig.patch.set_facecolor("white")
 
     theta = np.linspace(0.0, 2.0 * np.pi, 400)
@@ -139,27 +136,31 @@ def _render_hoop_geometry(output_path: Path):
     ax.legend(loc="lower right", fontsize=9, frameon=False)
 
     ax = axes[1]
-    x = np.linspace(-0.22, 0.22, 100)
-    z = 0.28 - 1.45 * (x - 0.02) ** 2
-    ax.plot(x, z, color="#009E73", linewidth=2.5, label="ball center path")
-    ax.axvline(0.0, color="#4D4D4D", linewidth=2.5, label="hoop plane")
-    ax.arrow(-0.13, 0.19, 0.09, 0.045, head_width=0.012, length_includes_head=True, color="#009E73")
-    ax.arrow(0.0, 0.06, 0.11, 0.0, head_width=0.012, length_includes_head=True, color="#CC79A7")
-    ax.scatter([0.0], [0.279], color="#E69F00", s=70, zorder=4)
-    ax.text(0.02, 0.065, "hoop normal", fontsize=10, color="#8B3E6D")
-    ax.text(-0.20, 0.03, "wrong direction\nor outside tolerance = fail", fontsize=9)
-    ax.set_title("Crossing direction")
-    ax.set_xlabel("normal coordinate [m]")
+    x = np.linspace(-0.24, 0.24, 160)
+    hoop_z = 0.205
+    crossing_x = 0.024
+    z = hoop_z + 0.035 - 1.05 * (x + 0.06) ** 2 - 0.42 * (x - crossing_x)
+    z += hoop_z - np.interp(crossing_x, x, z)
+    ax.plot(x, z, color="#0072B2", linewidth=2.5, label="ball center path")
+    ax.plot([-0.15, 0.15], [hoop_z, hoop_z], color="#4D4D4D", linewidth=3.0, label="horizontal hoop plane")
+    ax.plot([-tolerance, tolerance], [hoop_z, hoop_z], color="#009E73", linewidth=5.0, solid_capstyle="round", label="allowed center band")
+    ax.arrow(-0.17, 0.245, 0.10, -0.035, head_width=0.011, length_includes_head=True, color="#0072B2")
+    ax.arrow(0.18, hoop_z, 0.0, 0.060, head_width=0.011, length_includes_head=True, color="#CC79A7")
+    ax.scatter([crossing_x], [hoop_z], color="#E69F00", s=70, zorder=4)
+    ax.text(0.154, hoop_z + 0.066, "open side", fontsize=9, color="#8B3E6D", ha="left", va="bottom")
+    ax.set_title("Side view for a horizontal hoop")
+    ax.set_xlabel("side-view coordinate [m]")
     ax.set_ylabel("height [m]")
-    ax.set_xlim(-0.22, 0.22)
-    ax.set_ylim(0.0, 0.34)
+    ax.set_xlim(-0.24, 0.24)
+    ax.set_ylim(0.13, 0.29)
     ax.grid(alpha=0.25)
-    ax.legend(loc="upper right", fontsize=9, frameon=False)
+    ax.legend(loc="lower left", fontsize=9, frameon=False)
 
     for ax in axes:
         ax.tick_params(labelsize=9)
         ax.title.set_fontsize(11)
     fig.savefig(output_path, dpi=240)
+    fig.savefig(output_path.with_suffix(".pdf"))
     plt.close(fig)
 
 
@@ -236,6 +237,7 @@ def _render_candidate_pareto(benchmark: dict, output_path: Path):
     ax.grid(alpha=0.25)
     ax.legend(fontsize=8.5, frameon=False)
     fig.savefig(output_path, dpi=240)
+    fig.savefig(output_path.with_suffix(".pdf"))
     plt.close(fig)
 
 
@@ -273,12 +275,22 @@ def _render_failure_velocity_diagnostics(benchmark: dict, output_path: Path):
     ax.grid(alpha=0.25)
     ax.legend(fontsize=8.5, frameon=False)
     fig.savefig(output_path, dpi=240)
+    fig.savefig(output_path.with_suffix(".pdf"))
     plt.close(fig)
 
 
 def _resize_to_height(image: Image.Image, height: int):
     width = int(round(image.width * height / image.height))
     return image.resize((width, height), Image.Resampling.LANCZOS)
+
+
+def _crop_mesh_side_view(image: Image.Image):
+    width, height = image.size
+    left = int(width * 0.14)
+    right = int(width * 0.93)
+    top = int(height * 0.08)
+    bottom = int(height * 0.90)
+    return image.crop((left, top, right, bottom))
 
 
 def _font(size: int):

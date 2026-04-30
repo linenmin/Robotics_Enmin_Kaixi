@@ -60,6 +60,7 @@ def run_validation(
     output_dir.mkdir(parents=True, exist_ok=True)
     metrics_path = output_dir / "task2_metrics.json"
     figure_path = output_dir / "task2_interception_selection.png"
+    figure_pdf_path = output_dir / "task2_interception_selection.pdf"
 
     metrics = compute_metrics(interception, predictor.time, z_min, max_tcp_distance)
     metrics_path.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
@@ -71,6 +72,7 @@ def run_validation(
         prediction=prediction,
         interception=interception,
         figure_path=figure_path,
+        figure_pdf_path=figure_pdf_path,
     )
 
     return metrics_path, figure_path, metrics
@@ -119,7 +121,7 @@ def compute_metrics(interception, current_time: float, z_min: float, max_tcp_dis
     }
 
 
-def plot_selection(observed_times, measurements, true_positions, prediction, interception, figure_path):
+def plot_selection(observed_times, measurements, true_positions, prediction, interception, figure_path, figure_pdf_path):
     fig = plt.figure(figsize=(10.0, 4.5))
     ax_3d = fig.add_subplot(1, 2, 1, projection="3d")
     ax_time = fig.add_subplot(1, 2, 2)
@@ -143,7 +145,7 @@ def plot_selection(observed_times, measurements, true_positions, prediction, int
         ax_3d.scatter(rejected[:, 0], rejected[:, 1], rejected[:, 2], color="tab:red", s=14, label="rejected")
     if accepted_indices:
         accepted = prediction.positions[accepted_indices]
-        ax_3d.scatter(accepted[:, 0], accepted[:, 1], accepted[:, 2], color="tab:blue", s=18, label="accepted")
+        ax_3d.scatter(accepted[:, 0], accepted[:, 1], accepted[:, 2], color="tab:blue", s=34, label="accepted")
     if interception.success:
         ax_3d.scatter(
             [interception.position[0]],
@@ -163,7 +165,8 @@ def plot_selection(observed_times, measurements, true_positions, prediction, int
     ax_time.plot(prediction.times, prediction.positions[:, 2], color="tab:green", linestyle="--", label="predicted z")
     for index, status in enumerate(statuses):
         color = "tab:blue" if status == "accepted" else "tab:red"
-        ax_time.scatter(prediction.times[index], prediction.positions[index, 2], color=color, s=18)
+        size = 34 if status == "accepted" else 18
+        ax_time.scatter(prediction.times[index], prediction.positions[index, 2], color=color, s=size)
     if interception.success:
         ax_time.scatter(interception.time, interception.position[2], color="gold", edgecolor="black", s=90, label="selected")
     ax_time.set_xlabel("time [s]")
@@ -173,6 +176,7 @@ def plot_selection(observed_times, measurements, true_positions, prediction, int
 
     fig.tight_layout()
     fig.savefig(figure_path, dpi=180)
+    fig.savefig(figure_pdf_path)
     plt.close(fig)
 
 

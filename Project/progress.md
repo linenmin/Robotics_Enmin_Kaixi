@@ -646,3 +646,81 @@ Verification:
 - Final PDF has 7 pages total: title page, 5 body pages, references.
 - Rendered pages inspected for formula readability, Task 4 table, Pareto figure, and failure figure.
 - Banned wording and first-person scan returned no matches.
+
+## 2026-04-30
+
+### V7 Report Clarity Revision Completed
+
+根据用户对最终报告的指标、公式、图表和叙事反馈，完成一次面向提交质量的整体修订。
+
+Completed:
+
+- 重新阅读 `AGENT_PROTOCOL.md` 和老师项目 PDF，确认修改仍然围绕四个 task 和 8 页正文限制。
+- 更新 `AGENT_PROTOCOL.md`，加入两条执行规则：
+  - 关键数字和图表必须解释工程含义；
+  - 表格中容易歧义的指标必须在 caption 或正文中定义。
+- 将报告核心公式改成编号公式：
+  - Kalman state definition；
+  - linear Gaussian process / measurement model；
+  - reactive damped pseudo-inverse controller；
+  - NLP decision variables；
+  - second-order joint dynamics；
+  - full NLP objective and hard constraints。
+- 在公式后补充变量解释和每个 cost / constraint 的作用。
+- 加强 Task 1 filter choice 论证：线性高斯模型下 Kalman filter 给出 Bayes-optimal MMSE update 和 analytic covariance；EKF 在这里退化为同一线性更新，particle filter 会引入不必要采样噪声。
+- 将 Task 4 downstream noise sweep 和 covariance ablation 从 Task 1 移到 Task 4 的系统鲁棒性讨论。
+- 放大 Figure 2，并新增 measurement error vs filtered error 面板。
+- 将 Figure 3 改为水平 hoop 的几何定义图，避免竖直 hoop 造成误解。
+- 放大 Figure 4 / Figure 5，并在正文解释 Task 3 的瓶颈主要是 acceleration bound，而不是 velocity bound。
+- 将 Figure 6 改为 PDF 输出，并裁剪 side-view UR10 mesh 图。
+- 将 `Self-sphere proxy` 改成 `self-collision clearance proxy`，并说明它是后验近似，不等同于 full mesh collision constraint。
+- 明确 `R_{zz}=e_z^\top R_{\mathrm{tcp}}(q)e_z`，简化 URDF/TCP normal 的绕口解释。
+- 明确 Task 4 中的 `92 ms` 是 catch-time delay，不是计算耗时。
+- 在 benchmark table caption 中定义 `TCP [mm]`、`Radial [mm]`、`Max ddq` 和 `IPOPT`。
+- 重新诊断 seed 11 失败：
+  - 7 个 shortlisted candidates 全部 NLP 收敛；
+  - 全部存在 hoop-plane crossing；
+  - 但 radial error 全部超过 30 mm；
+  - early candidates saturate joint 3 acceleration；
+  - later candidates saturate joint 2 acceleration；
+  - 失败机制为 acceleration-limited geometry，而不是 estimator 或 NLP failure。
+- 删除正文里的 Course Connection、环境版本、脚本命令和 git/commit 相关内容。
+
+Updated:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\AGENT_PROTOCOL.md`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\task_plan.md`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\high_score_improvement_plan.md`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\report_template\template.tex`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\strategy_benchmark.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\scripts\benchmark_high_score_strategies.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\scripts\render_high_score_figures.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\scripts\validate_task1_prediction.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\scripts\validate_task2_interception.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\scripts\validate_task3_nlp_layer1.py`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\software\tests\test_strategy_benchmark.py`
+
+Generated:
+
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\report\final_report_research_grade_v7.pdf`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task1\task1_trajectory_prediction.pdf`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task2_dist1p0\task2_interception_selection.pdf`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task3\task3_layer1_plan.pdf`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\task3\task3_joint_limits.pdf`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\high_score\figure_hoop_geometry_definition.pdf`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\high_score\figure_task2_task4_side_by_side.pdf`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\high_score\figure_candidate_pareto.pdf`
+- `D:\BaiduNetdiskWorkspace\Leuven\8th\Robotics\homework\Project\outputs\high_score\figure_failure_velocity_diagnostics.pdf`
+
+Verification:
+
+- `conda run -n robotics python -m unittest discover -s tests` passed: 20 tests.
+- Bundled Tectonic compilation succeeded.
+- Final report body has 6 pages, below the 8-page limit.
+- PDF pages were exported and visually inspected for figure readability, table layout, equation numbering, and text overflow.
+- Report scan returned no matches for first-person wording, banned phrases, Course Connection, environment package versions, script commands, git, or commit.
+- Discord notification sent successfully.
+
+### Current Next Step
+
+提交前状态已达到。下一步是用户人工浏览 `outputs/report/final_report_research_grade_v7.pdf`；若没有新修改意见，则执行最终 git commit 和 push。

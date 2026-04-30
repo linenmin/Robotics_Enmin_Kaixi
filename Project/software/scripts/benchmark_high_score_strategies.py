@@ -202,6 +202,12 @@ def _evaluate_common_candidate_pool(
         safety_metrics = evaluate_plan_safety(robot, tcp_pose, plan.q)
         safety_penalty = _safety_penalty(safety_metrics)
         terminal_error = float(plan.terminal_error)
+        ddq_abs = np.abs(plan.ddq)
+        max_ddq_flat = int(np.argmax(ddq_abs))
+        max_ddq_joint = int(np.unravel_index(max_ddq_flat, ddq_abs.shape)[1] + 1)
+        velocity_ratios = np.abs(plan.dq) / limits.velocity.reshape(1, -1)
+        max_velocity_flat = int(np.argmax(velocity_ratios))
+        max_velocity_joint = int(np.unravel_index(max_velocity_flat, velocity_ratios.shape)[1] + 1)
         hoop_center, hoop_rotation = tcp_pose(plan.q[-1])
         hoop_center = np.asarray(hoop_center, dtype=float).reshape(3)
         hoop_rotation = np.asarray(hoop_rotation, dtype=float)
@@ -235,8 +241,10 @@ def _evaluate_common_candidate_pool(
                 nlp_success=bool(plan.success),
                 passes_hoop=bool(true_crossing.passes_through_hoop),
                 terminal_error=terminal_error,
-                max_abs_ddq=float(np.max(np.abs(plan.ddq))),
-                max_velocity_ratio=float(np.max(np.abs(plan.dq) / limits.velocity.reshape(1, -1))),
+                max_abs_ddq=float(np.max(ddq_abs)),
+                max_abs_ddq_joint=max_ddq_joint,
+                max_velocity_ratio=float(np.max(velocity_ratios)),
+                max_velocity_ratio_joint=max_velocity_joint,
                 safety_penalty=safety_penalty,
                 solver_status=str(plan.status),
                 solve_time_s=float(plan.solve_time_s),
@@ -300,7 +308,9 @@ def _candidate_to_row(candidate: CandidateEvaluation) -> dict:
         "success": bool(candidate.success),
         "terminal_error_m": float(candidate.terminal_error),
         "max_abs_ddq": float(candidate.max_abs_ddq),
+        "max_abs_ddq_joint": candidate.max_abs_ddq_joint,
         "max_velocity_ratio": float(candidate.max_velocity_ratio),
+        "max_velocity_ratio_joint": candidate.max_velocity_ratio_joint,
         "safety_penalty": float(candidate.safety_penalty),
         "min_tcp_table_clearance_m": candidate.min_tcp_table_clearance,
         "min_frame_table_clearance_m": candidate.min_frame_table_clearance,

@@ -19,12 +19,14 @@
 
 以 `hoops_description.pdf` 的 4 个任务作为主线。
 
-| 子任务 | PDF 要求 | 主要代码位置 | 主要课件依据 |
-|---|---|---|---|
-| Task 1 | 从球位置测量预测球轨迹，并选择状态估计 filter 且说明理由 | `TrajectoryPredictor.step()` / `predict()` | C6 Bayes/Kalman/tracking model |
-| Task 2 | 用简单策略选择球预测轨迹上的接球点 | interception point logic | C5 motion planning, free space, sampling |
-| Task 3 | 用优化式控制器计算机械臂运动，满足姿态、碰撞、关节约束 | `Controller.step()` | C3 task-space/resolved acceleration, C4 constraints, C5 optimal control |
-| Task 4 | 设计更聪明的接球点策略，提高成功率并缩短接球时间 | smarter interception strategy | C5 optimal control/sampling, C3 minimum jerk, C3 stack of tasks |
+
+| 子任务    | PDF 要求                           | 主要代码位置                                     | 主要课件依据                                                                  |
+| ------ | -------------------------------- | ------------------------------------------ | ----------------------------------------------------------------------- |
+| Task 1 | 从球位置测量预测球轨迹，并选择状态估计 filter 且说明理由 | `TrajectoryPredictor.step()` / `predict()` | C6 Bayes/Kalman/tracking model                                          |
+| Task 2 | 用简单策略选择球预测轨迹上的接球点                | interception point logic                   | C5 motion planning, free space, sampling                                |
+| Task 3 | 用优化式控制器计算机械臂运动，满足姿态、碰撞、关节约束      | `Controller.step()`                        | C3 task-space/resolved acceleration, C4 constraints, C5 optimal control |
+| Task 4 | 设计更聪明的接球点策略，提高成功率并缩短接球时间         | smarter interception strategy              | C5 optimal control/sampling, C3 minimum jerk, C3 stack of tasks         |
+
 
 默认不写入报告的内容：
 
@@ -179,8 +181,10 @@ Result Review 固定输出：
 - 使用 `report_template/template.tex`。
 - 标题页和参考文献不计入 8 页正文。
 - 正文最多 8 页。
-- 每个 task 的报告段落必须短、证据明确、术语贴近课程。
+- 每个 task 的报告段落证据明确、术语贴近课程。
 - 每段尽量采用“观察 -> 机制 -> 影响”的结构。
+- 关键数字和图表必须解释其工程含义，不允许只罗列指标。
+- 表格中容易歧义的指标必须在 caption 或正文中定义。
 - 不复制课件背景，不复述代码流程。
 
 渲染规则：
@@ -196,16 +200,18 @@ Result Review 固定输出：
 
 正文最多 8 页。默认预算如下，可根据实验结果微调，但必须保持总页数不超过 8。
 
-| 部分 | 文字预算 | 图/表预算 | 页预算 |
-|---|---:|---:|---:|
-| Problem setup and assumptions | 180 words | 0-1 compact schematic/table | 0.6 |
-| Task 1: trajectory prediction | 330 words | 1 figure + 1 small table optional | 1.3 |
-| Task 2: simple interception strategy | 240 words | 1 small figure or table | 1.0 |
-| Task 3: optimization-based controller | 520 words | 1-2 figures + 1 table | 2.4 |
-| Task 4: smarter interception strategy | 320 words | 1 comparison figure/table | 1.3 |
-| Results and failure analysis | 280 words | 1 compact summary table/figure | 1.1 |
-| Conclusion | 100 words | none | 0.3 |
-| **Total** | **~1970 words max** | **4-6 compact visual units** | **8.0** |
+
+| 部分                                    | 文字预算                | 图/表预算                             | 页预算     |
+| ------------------------------------- | ------------------- | --------------------------------- | ------- |
+| Problem setup and assumptions         | 180 words           | 0-1 compact schematic/table       | 0.6     |
+| Task 1: trajectory prediction         | 330 words           | 1 figure + 1 small table optional | 1.3     |
+| Task 2: simple interception strategy  | 240 words           | 1 small figure or table           | 1.0     |
+| Task 3: optimization-based controller | 520 words           | 1-2 figures + 1 table             | 2.4     |
+| Task 4: smarter interception strategy | 320 words           | 1 comparison figure/table         | 1.3     |
+| Results and failure analysis          | 280 words           | 1 compact summary table/figure    | 1.1     |
+| Conclusion                            | 100 words           | none                              | 0.3     |
+| **Total**                             | **~1970 words max** | **4-6 compact visual units**      | **8.0** |
+
 
 压缩优先级：
 
@@ -258,43 +264,28 @@ Result Review 固定输出：
 - 报告正文、图表、caption、表格用英文。
 - 协议、决策备忘、实验计划和对话用中文。
 
-### 6.2 语气
+### 6.2 报告语言要求
 
 报告语气必须自然、直接、诚恳、权威且不浮夸。
 
-- 保持有分寸的自信。
-- 不过度热情。
-- 不自我解释。
-- 不过分比较。
+- 保持有分寸的自信，不要过度热情，不要自我解释，不要过分比较。
 - 优先使用朴实、精准的学术词汇。
-- 如果原句已经地道且无明显 AI 特征，保留原句，不为“润色”而改坏。
+- 仅在必要时使用术语，禁止为“高级感”堆砌辞藻。
+- 如果原文本已无明显 AI 特征且地道，宁缺毋滥，保留原文。
+- 绝对避免滥用的复杂词汇。除非特定语境确实需要，禁止 `leverage`、`delve into`、`tapestry` 等，改用 `use`、`investigate`、`context`。
 
-### 6.3 禁用词和替换
+### 6.3 句法与结构限制
 
-除非特定语境确实需要，禁止使用：
-
-| 禁用 | 替换 |
-|---|---|
-| leverage | use |
-| delve into | investigate / examine |
-| tapestry | context |
-| utilize | use |
-| in order to | to |
-| aims to | determines / estimates / computes |
-| attempts to | computes / tests / evaluates |
-| is likely to | may / can / 或直接陈述有证据的事实 |
-
-### 6.4 句法强制限制
-
-- 禁止一个句子并列超过三个复杂名词短语。信息过载时必须断句。
-- 禁止句末伴随状语，例如 `, allowing ...`、`, resulting in ...`。必须拆成独立句。
-- 描述系统、算法或研究步骤时使用主动语态。
-- 明确动作主体，例如 `The controller computes ...`，不要写 `... is computed`。
+- 长短句结合。使用短句陈述核心观点或强主张，使用结构清晰的长句（如定语从句或伴随状语）来解释复杂的逻辑或因果关系。
+- 避免无意义的从句堆砌，确保主谓结构一眼可见。
 - 尽量少用破折号。优先用逗号、括号或断句。
-- 限制生硬句首过渡词。少用 `Furthermore`、`Therefore`、`Moreover`，不用 `First and foremost`。
-- 依靠句子间逻辑递进，不靠套话连接。
+- 剔除生硬的句首过渡词，例如 `First and foremost`。
+- 严格限制 `Furthermore`、`Therefore`、`Moreover` 的使用。
+- 依靠句子间的逻辑递进自然连接，不靠套话连接。
 
-### 6.5 句子节奏
+说明：不再绝对禁止句末伴随状语，不再强制全篇主动语态，也不再分类清除所有谨慎表达或目的性表达。消融实验、鲁棒性实验和失败诊断可以说明实验目的、不确定性和边界条件，但必须写清楚为什么做、观察到什么、结论是什么。
+
+### 6.4 句子节奏
 
 每个核心论点按三步组织，每步最多一句：
 
@@ -310,7 +301,7 @@ The prediction step follows the gravity model, and the measurement update correc
 This matches the project assumption of Gaussian position noise and gives a defensible trajectory for interception.
 ```
 
-### 6.6 必须排除
+### 6.5 必须排除
 
 - 不写 agent 内部管理过程。
 - 不写“we first opened the notebook”这类流程废话。
@@ -319,7 +310,7 @@ This matches the project assumption of Gaussian position noise and gives a defen
 - 不写没有证据支撑的泛泛比较。
 - 不用感叹号和 emoji。
 
-### 6.7 Bigger Picture 自检
+### 6.6 Bigger Picture 自检
 
 每完成一个报告段落，检查：
 
@@ -395,27 +386,29 @@ C:\Users\Lem17\.codex\plugins\cache\openai-bundled\latex-tectonic\0.1.0\bin\tect
 
 ## 8. 决策日志
 
-| 日期 | 主题 | 决策 | 理由 |
-|---|---|---|---|
-| 2026-04-28 | 环境 | 使用 Conda 环境 `robotics` | 已通过老师 setup notebook 和 project notebook |
-| 2026-04-28 | 项目位置 | 使用 `Robotics/homework/Project` | `homework` 是 Git 仓库 |
-| 2026-04-28 | 任务结构 | 按 PDF 四个 task 推进 | 与评分要求最一致 |
-| 2026-04-28 | 课件依据 | 使用 `course_knowledge_map.md` 作为入口 | 已结合文本检索和读图检查 |
-| 2026-04-28 | 报告 | 使用 LaTeX 模板，正文不超过 8 页 | 符合项目说明 |
-| 2026-04-28 | 渲染 | 最终优先使用 Tectonic | 用户要求，并适合轻量本地编译 |
+
+| 日期         | 主题   | 决策                                | 理由                                      |
+| ---------- | ---- | --------------------------------- | --------------------------------------- |
+| 2026-04-28 | 环境   | 使用 Conda 环境 `robotics`            | 已通过老师 setup notebook 和 project notebook |
+| 2026-04-28 | 项目位置 | 使用 `Robotics/homework/Project`    | `homework` 是 Git 仓库                     |
+| 2026-04-28 | 任务结构 | 按 PDF 四个 task 推进                  | 与评分要求最一致                                |
+| 2026-04-28 | 课件依据 | 使用 `course_knowledge_map.md` 作为入口 | 已结合文本检索和读图检查                            |
+| 2026-04-28 | 报告   | 使用 LaTeX 模板，正文不超过 8 页             | 符合项目说明                                  |
+| 2026-04-28 | 渲染   | 最终优先使用 Tectonic                   | 用户要求，并适合轻量本地编译                          |
+
 
 ---
 
 ## 9. 最终提交前检查清单
 
-- [ ] PDF 四个 task 都有明确回答。
-- [ ] 每个 task 都对应课程知识点。
-- [ ] Task 1 filter choice 有理由。
-- [ ] Task 2 和 Task 4 区分清楚。
-- [ ] Task 3 的优化变量、目标、约束写清楚。
-- [ ] 所有图表都有明确用途。
-- [ ] 正文不超过 8 页。
-- [ ] 标题页和参考文献单独计页。
-- [ ] 用 Tectonic 成功渲染。
-- [ ] PDF 页面已导出图片并读图检查。
-- [ ] Git 中不包含 executed notebook、cache、临时编译垃圾。
+- PDF 四个 task 都有明确回答。
+- 每个 task 都对应课程知识点。
+- Task 1 filter choice 有理由。
+- Task 2 和 Task 4 区分清楚。
+- Task 3 的优化变量、目标、约束写清楚。
+- 所有图表都有明确用途。
+- 正文不超过 8 页。
+- 标题页和参考文献单独计页。
+- 用 Tectonic 成功渲染。
+- PDF 页面已导出图片并读图检查。
+- Git 中不包含 executed notebook、cache、临时编译垃圾。

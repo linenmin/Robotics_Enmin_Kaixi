@@ -295,6 +295,84 @@
 6. Phase 6：重做报告图。
 7. Phase 7：写报告并渲染验收。
 
+## Phase 8: V7 Clarity, Metrics, and Figure Revision
+
+**Status:** completed
+
+### 目标
+
+根据最终人工审查反馈，把报告从“结果充分”进一步改成“指标定义清晰、公式可追踪、每张图都有解释、失败机制可诊断”的提交版本。
+
+### 要做
+
+- 将关键公式改成带编号的 `equation` 环境。
+- 对 Kalman filter 模型、reactive baseline、NLP objective 和 constraints 逐一解释变量含义。
+- 放大 Figure 2，并改用 PDF 格式，确保 measured / filtered / true 的区别可见。
+- 将 Figure 3 改成水平 hoop 的 success-metric 示意图，避免竖直 hoop 造成概念误解。
+- 放大 Figure 4 / Figure 5，并在正文中解释图里反映的机制。
+- 将 Figure 6 改为 PDF，并裁剪 side-view mesh 图。
+- 删除报告正文里的 Course Connection、环境版本、脚本命令和 git/commit 信息。
+- 将 `A downstream Task 4 sweep...` 和 covariance ablation 移到 Task 4 系统鲁棒性讨论。
+- 定义容易歧义的 benchmark 指标：TCP、Radial、Max ddq、IPOPT、self-collision clearance proxy。
+- 进一步诊断 seed 11 失败原因，查看 rejected / failed candidates 是否被关节限制、加速度限制或 hoop-crossing 几何限制挡住。
+
+### 验收标准
+
+- 报告中所有核心公式都有编号和文字解释。
+- 表格里的缩写指标可以独立理解，不需要读者猜测。
+- 每个关键图至少有一句正文解释其工程含义。
+- Task 1 主要讨论 filter choice，不被 Task 4 robustness 内容喧宾夺主。
+- Task 4 的 92 ms 明确表述为 catch-time delay，而不是计算耗时。
+- Course/material/background 只保留必要方法语言，不出现单独的 Course Connection 段。
+- 环境依赖和脚本命令不进入最终报告正文。
+- 正文仍不超过 8 页。
+
+### 结果
+
+- Task 1:
+  - 增加 Eq. (1) state definition 和 Eq. (2) linear Gaussian process / measurement model。
+  - 明确 Kalman filter 选择理由：线性高斯模型下给出 Bayes-optimal MMSE update 和 analytic covariance。
+  - Figure 2 改为更大的 PDF 轨迹图，下方增加 measurement error vs filtered error 放大面板。
+- Task 2:
+  - Reactive controller 公式编号，并定义 \(K\) 和 \(\lambda\)。
+  - Figure 3 改为水平 hoop 几何示意，标出 radial error、30 mm allowed ball-center band 和 open side。
+- Task 3:
+  - Decision variables、discrete dynamics、NLP objective / constraints 全部编号。
+  - 增加公式后解释：\(p^\star\)、\(p_{\mathrm{tcp}}\)、\(n_{\mathrm{hoop}}\)、\(\hat v_{\mathrm{ball}}\)、各 cost term 和 hard constraints。
+  - 简化 URDF/TCP normal 说明，明确 \(R_{zz}=e_z^\top R_{\mathrm{tcp}}(q)e_z\)。
+  - Figure 4 放大并标出 terminal error 20.1 mm。
+  - Figure 5 放大，并在正文解释加速度是主要瓶颈。
+  - `Self-sphere proxy` 改为 `self-collision clearance proxy`，并说明它是后验近似，不是 full mesh collision。
+- Task 4:
+  - 迁入 noise downstream sweep 与 covariance ablation，作为系统鲁棒性证据。
+  - 明确 92 ms 是 catch-time delay，不是计算耗时。
+  - Figure 6 改用 PDF，side-view mesh 图重新裁剪。
+  - Benchmark table caption 定义所有容易歧义的指标。
+- Failure analysis:
+  - seed 11 的 7 个候选全部 NLP 收敛并穿过 hoop plane，但全部超出 30 mm radial tolerance。
+  - early candidates saturate joint 3 acceleration；later candidates saturate joint 2 acceleration。
+  - 失败机制定义为 acceleration-limited geometry，而不是 estimator divergence 或 NLP failure。
+
+### 产物
+
+- `outputs/report/final_report_research_grade_v7.pdf`
+- `outputs/task1/task1_trajectory_prediction.pdf`
+- `outputs/task2_dist1p0/task2_interception_selection.pdf`
+- `outputs/task3/task3_layer1_plan.pdf`
+- `outputs/task3/task3_joint_limits.pdf`
+- `outputs/high_score/figure_hoop_geometry_definition.pdf`
+- `outputs/high_score/figure_task2_task4_side_by_side.pdf`
+- `outputs/high_score/figure_candidate_pareto.pdf`
+- `outputs/high_score/figure_failure_velocity_diagnostics.pdf`
+
+### 验证
+
+- `conda run -n robotics python -m unittest discover -s tests` passed: 20 tests.
+- Bundled Tectonic compilation succeeded.
+- Final report body is 6 pages, below the 8-page limit.
+- PDF pages were rendered and visually inspected.
+- Text scan returned no matches for first-person wording, banned phrases, Course Connection, environment package versions, script commands, git, or commit.
+
 ## Current Next Step
 
-Phase 1-7 complete. Next step is optional final polishing, submission packaging, or a last professor-style review before handing in.
+Phase 1-8 complete. The current best submission candidate is `outputs/report/final_report_research_grade_v7.pdf`. Next step is user review, then final git commit and push if no further report edits are needed.
