@@ -1,5 +1,7 @@
 # Robotics Coursework Repository
 
+[English](README.md) | [中文](README.zh-CN.md)
+
 This repository contains the Robotics homework submissions and the final reverse-hoops robot arm project.
 
 ## Final Deliverables
