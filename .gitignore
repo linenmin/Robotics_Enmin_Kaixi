@@ -17,3 +17,6 @@ Project/outputs/task4/*.html
 Project/outputs/high_score/*.html
 Project/outputs/high_score_smoke*/
 Project/report_template/build/
+.omc/project-memory.json
+.omc/state/sessions/ec5b38a4-2862-4c6e-8a5c-e9db091645ed/session-started.json
+.vscode/settings.json

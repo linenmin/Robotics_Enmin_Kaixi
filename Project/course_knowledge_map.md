@@ -87,11 +87,7 @@ $$
 测量模型：
 
 $$
-z_t =
-\begin{bmatrix}
-p_x & p_y & p_z
-\end{bmatrix}^T
-+ \rho_t
+z_t = \begin{bmatrix} p_x & p_y & p_z\end{bmatrix}^T + \rho_t
 $$
 
 其中：
